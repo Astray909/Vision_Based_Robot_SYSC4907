@@ -2,11 +2,11 @@
 Master Repo for SYSC 4907 Vision Based Robot Project
 
 ## Authors
+##### [Ben Ransom](https://github.com/brnjamino)
 ##### [Justin Huang](https://github.com/Astray909)
-##### [Leenesh Kumar]()
-##### [Kevin Johnson]()
-##### [Mingzhi Chen]()
-##### [Ben Ransom]()
+##### [Kevin Johnson](https://github.com/Kevin9921)
+##### [Leenesh Kumar](https://github.com/pyro43)
+##### [Mingzhi Chen](https://github.com/Shiiiiiba0w0)
 
 ## Appendix:
 1. To fetch latest GIT:
