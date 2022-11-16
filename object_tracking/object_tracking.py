@@ -1,11 +1,34 @@
-
 import cv2
 import sys
+import os
  
 (major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
- 
-if __name__ == '__main__' :
- 
+
+def save_frame_camera_key(device_num, dir_path, basename, ext='jpg', delay=1, window_name='frame'):
+    cap = cv2.VideoCapture(device_num)
+
+    if not cap.isOpened():
+        return
+
+    os.makedirs(dir_path, exist_ok=True)
+    base_path = os.path.join(dir_path, basename)
+
+    n = 0
+    while True:
+        ret, frame = cap.read()
+        cv2.imshow(window_name, frame)
+        key = cv2.waitKey(delay) & 0xFF
+        if key == ord('c'):
+        # if n == 0:
+            cv2.imwrite('{}_{}.{}'.format(base_path, n, ext), frame)
+            n += 1
+        # elif key == ord('q'):
+        elif n == 1:
+            break
+
+    cv2.destroyWindow(window_name)
+
+def tracking():
     # Set up tracker.
     # Instead of CSRT, you can also use
  
@@ -49,9 +72,12 @@ if __name__ == '__main__' :
      
     # Define an initial bounding box
     bbox = (287, 23, 86, 320)
+
+    # ROI box background image
+    img = cv2.imread("data/roi_sel/roi_sel_img_0.jpg")
  
     # Uncomment the line below to select a different bounding box
-    bbox = cv2.selectROI(frame, False)
+    bbox = cv2.selectROI(img, False)
  
     # Initialize tracker with first frame and bounding box
     ok = tracker.init(frame, bbox)
@@ -90,8 +116,12 @@ if __name__ == '__main__' :
         cv2.imshow("Tracking", frame)
  
         # Exit if ESC pressed
-        if cv2.waitKey(1) & 0xFF == ord('q'): # if press SPACE bar
+        if cv2.waitKey(1) & 0xFF == ord('q'): # if press q
             break
     video.release()
     cv2.destroyAllWindows()
+ 
+if __name__ == '__main__' :
+    save_frame_camera_key(0, 'data/roi_sel', 'roi_sel_img')
+    tracking()
     
