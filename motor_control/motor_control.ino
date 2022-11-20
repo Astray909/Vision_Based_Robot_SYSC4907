@@ -26,8 +26,8 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  analogWrite(EnA, 80);
-  analogWrite(EnB, 80);
+  analogWrite(EnA, 100);
+  analogWrite(EnB, 100);
   goStraight();
   // Serial.println(analogRead(debug1));
   // Serial.println(analogRead(debug2));
