@@ -26,22 +26,13 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  analogWrite(EnA, 100);
-  analogWrite(EnB, 100);
   goStraight();
-  // Serial.println(analogRead(debug1));
-  // Serial.println(analogRead(debug2));
-  // delay(1000);
-  // goBack();
-  // delay(1000);
-  // turnLeft();
-  // delay(1000);
-  // turnRight();
-  // delay(1000);
 }
 
 void goStraight()   //run both motors in the same direction
 {
+  analogWrite(EnA, 100);
+  analogWrite(EnB, 100);
   // turn on motor A
   digitalWrite(In1, HIGH);
   digitalWrite(In2, LOW);
@@ -52,6 +43,8 @@ void goStraight()   //run both motors in the same direction
 
 void goBack()   //run both motors in the same direction
 {
+  analogWrite(EnA, 100);
+  analogWrite(EnB, 100);
   // turn on motor A
   digitalWrite(In1, LOW);
   digitalWrite(In2, HIGH);
@@ -62,6 +55,8 @@ void goBack()   //run both motors in the same direction
 
 void turnLeft()
 {
+  analogWrite(EnA, 100);
+  analogWrite(EnB, 100);
   // turn on motor A
   digitalWrite(In1, HIGH);
   digitalWrite(In2, LOW);
@@ -72,9 +67,35 @@ void turnLeft()
 
 void turnRight()
 {
+  analogWrite(EnA, 100);
+  analogWrite(EnB, 100);
   // turn on motor A
   digitalWrite(In1, LOW);
   digitalWrite(In2, HIGH);
+  // turn on motor B
+  digitalWrite(In3, HIGH);
+  digitalWrite(In4, LOW);
+}
+
+void curveLeft()   //run both motors in the same direction
+{
+  analogWrite(EnA, 60);
+  analogWrite(EnB, 100);
+  // turn on motor A
+  digitalWrite(In1, HIGH);
+  digitalWrite(In2, LOW);
+  // turn on motor B
+  digitalWrite(In3, HIGH);
+  digitalWrite(In4, LOW);
+}
+
+void curveRight()   //run both motors in the same direction
+{
+  analogWrite(EnA, 100);
+  analogWrite(EnB, 60);
+  // turn on motor A
+  digitalWrite(In1, HIGH);
+  digitalWrite(In2, LOW);
   // turn on motor B
   digitalWrite(In3, HIGH);
   digitalWrite(In4, LOW);
