@@ -7,10 +7,10 @@
 #define In3 7
 #define In4 6
 
-#define mov0 0
-#define mov1 1
-#define mov2 2
-#define mov3 3
+#define mov0 2
+#define mov1 3
+#define mov2 4
+#define mov3 11
 
 // #define debug1 3
 // #define debug2 11
@@ -45,48 +45,49 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if(digitalRead(mov0) == 0 && digitalRead(mov0) == 0 && digitalRead(mov0) == 0 && digitalRead(mov0) == 1)
+  if(digitalRead(mov0) == 0 && digitalRead(mov1) == 0 && digitalRead(mov2) == 0 && digitalRead(mov3) == 1)
   {
     Serial.println("goStraight");
     goStraight();
   }
-  else if (digitalRead(mov0) == 0 && digitalRead(mov0) == 0 && digitalRead(mov0) == 1 && digitalRead(mov0) == 0)
+  else if (digitalRead(mov0) == 0 && digitalRead(mov1) == 0 && digitalRead(mov2) == 1 && digitalRead(mov3) == 0)
   {
     Serial.println("goBack");
     goBack();
   }
-  else if (digitalRead(mov0) == 0 && digitalRead(mov0) == 0 && digitalRead(mov0) == 1 && digitalRead(mov0) == 1)
+  else if (digitalRead(mov0) == 0 && digitalRead(mov1) == 0 && digitalRead(mov2) == 1 && digitalRead(mov3) == 1)
   {
     Serial.println("turnLeft");
     turnLeft();
   }
-  else if (digitalRead(mov0) == 0 && digitalRead(mov0) == 1 && digitalRead(mov0) == 0 && digitalRead(mov0) == 0)
+  else if (digitalRead(mov0) == 0 && digitalRead(mov1) == 1 && digitalRead(mov2) == 0 && digitalRead(mov3) == 0)
   {
     Serial.println("turnRight");
     turnRight();
   }
-  else if (digitalRead(mov0) == 0 && digitalRead(mov0) == 1 && digitalRead(mov0) == 0 && digitalRead(mov0) == 1)
+  else if (digitalRead(mov0) == 0 && digitalRead(mov1) == 1 && digitalRead(mov2) == 0 && digitalRead(mov3) == 1)
   {
     Serial.println("curveLeft");
     curveLeft();
   }
-  else if (digitalRead(mov0) == 0 && digitalRead(mov0) == 1 && digitalRead(mov0) == 1 && digitalRead(mov0) == 0)
+  else if (digitalRead(mov0) == 0 && digitalRead(mov1) == 1 && digitalRead(mov2) == 1 && digitalRead(mov3) == 0)
   {
     Serial.println("curveRight");
     curveRight();
   }
-  else if (digitalRead(mov0) == 0 && digitalRead(mov0) == 1 && digitalRead(mov0) == 1 && digitalRead(mov0) == 1)
+  else if (digitalRead(mov0) == 0 && digitalRead(mov1) == 1 && digitalRead(mov2) == 1 && digitalRead(mov3) == 1)
   {
     Serial.println("backLeft");
     backLeft();
   }
-  else if (digitalRead(mov0) == 1 && digitalRead(mov0) == 0 && digitalRead(mov0) == 0 && digitalRead(mov0) == 0)
+  else if (digitalRead(mov0) == 1 && digitalRead(mov1) == 0 && digitalRead(mov2) == 0 && digitalRead(mov3) == 0)
   {
     Serial.println("backRight");
     backRight();
   }
   else
   {
+    Serial.println("stop");
     stop();
   }
 }
@@ -99,26 +100,26 @@ void stop()
 
 void goStraight()   //run both motors in the same direction
 {
-  analogWrite(EnA, 100);
-  analogWrite(EnB, 100);
+  analogWrite(EnA, 200);
+  analogWrite(EnB, 200);
   // turn on motor A
   digitalWrite(In1, HIGH);
   digitalWrite(In2, LOW);
   // turn on motor B
-  digitalWrite(In3, HIGH);
-  digitalWrite(In4, LOW);
+  digitalWrite(In3, LOW);
+  digitalWrite(In4, HIGH);
 }
 
 void goBack()   //run both motors in the same direction
 {
-  analogWrite(EnA, 100);
-  analogWrite(EnB, 100);
+  analogWrite(EnA, 200);
+  analogWrite(EnB, 200);
   // turn on motor A
   digitalWrite(In1, LOW);
   digitalWrite(In2, HIGH);
   // turn on motor B
-  digitalWrite(In3, LOW);
-  digitalWrite(In4, HIGH);
+  digitalWrite(In3, HIGH);
+  digitalWrite(In4, LOW);
 }
 
 void turnLeft()
@@ -129,8 +130,8 @@ void turnLeft()
   digitalWrite(In1, HIGH);
   digitalWrite(In2, LOW);
   // turn on motor B
-  digitalWrite(In3, LOW);
-  digitalWrite(In4, HIGH);
+  digitalWrite(In3, HIGH);
+  digitalWrite(In4, LOW);
 }
 
 void turnRight()
@@ -141,54 +142,54 @@ void turnRight()
   digitalWrite(In1, LOW);
   digitalWrite(In2, HIGH);
   // turn on motor B
-  digitalWrite(In3, HIGH);
-  digitalWrite(In4, LOW);
+  digitalWrite(In3, LOW);
+  digitalWrite(In4, HIGH);
 }
 
 void curveLeft()   //run both motors in the same direction
 {
-  analogWrite(EnA, 60);
+  analogWrite(EnA, 200);
   analogWrite(EnB, 100);
   // turn on motor A
   digitalWrite(In1, HIGH);
   digitalWrite(In2, LOW);
   // turn on motor B
-  digitalWrite(In3, HIGH);
-  digitalWrite(In4, LOW);
+  digitalWrite(In3, LOW);
+  digitalWrite(In4, HIGH);
 }
 
 void curveRight()   //run both motors in the same direction
 {
   analogWrite(EnA, 100);
-  analogWrite(EnB, 60);
+  analogWrite(EnB, 200);
   // turn on motor A
   digitalWrite(In1, HIGH);
   digitalWrite(In2, LOW);
   // turn on motor B
-  digitalWrite(In3, HIGH);
-  digitalWrite(In4, LOW);
+  digitalWrite(In3, LOW);
+  digitalWrite(In4, HIGH);
 }
 
 void backLeft()   //run both motors in the same direction
 {
-  analogWrite(EnA, 60);
+  analogWrite(EnA, 200);
   analogWrite(EnB, 100);
   // turn on motor A
   digitalWrite(In1, LOW);
   digitalWrite(In2, HIGH);
   // turn on motor B
-  digitalWrite(In3, LOW);
-  digitalWrite(In4, HIGH);
+  digitalWrite(In3, HIGH);
+  digitalWrite(In4, LOW);
 }
 
 void backRight()   //run both motors in the same direction
 {
   analogWrite(EnA, 100);
-  analogWrite(EnB, 60);
+  analogWrite(EnB, 200);
   // turn on motor A
   digitalWrite(In1, LOW);
   digitalWrite(In2, HIGH);
   // turn on motor B
-  digitalWrite(In3, LOW);
-  digitalWrite(In4, HIGH);
+  digitalWrite(In3, HIGH);
+  digitalWrite(In4, LOW);
 }
