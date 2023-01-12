@@ -15,6 +15,13 @@
 // #define debug1 3
 // #define debug2 11
 
+// Sensor connection defined below. Uncomment when testing.
+// int sensor_Left_pin=12;
+// int sensor_Right_pin=13;
+// int sensor_Mid_pin=0;
+
+
+
 void setup() {
   // put your setup code here, to run once:
   // All motor control pins are outputs
@@ -41,10 +48,46 @@ void setup() {
   // pinMode(debug1, INPUT);
   // pinMode(debug2, INPUT);
   Serial.begin(9600);
+  
+  // sensor setup begings here: uncomment when testing
+  // pinMode(sensor_Left, INPUT); // pin12 set as input from left sensor
+  // pinMode(sensor_Right, INPUT); // pin13 set as input from right sensor
+  // pinMode(sensor_Mid, INPUT); // pin0 set as input from mid sensor
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  //senor condition code below: uncomment when testing
+  // if (digitalRead{sensor_Mid}) // if middle sensor detect collision
+  //{
+  //  stop(); // First, robot stop and enter collision avoidance
+  //  if (!digitalRead{sensor_Left}) // if left sensor is clear,
+  //    {
+  //      do
+  //       {
+  //          turnLeft(); // turn left
+  //       }while(digitalRead{sensor_Mid}) // while mid sensor still trigered
+  //    }
+  //  else if (!digitalRead{sensor_Left}) // if right sensor is clear,
+  //    {
+  //      do
+  //       {
+  //          turnRight(); // turn right
+  //       }while(digitalRead{sensor_Mid}) // while mid still blocked
+  //    }
+  //  else // all sensors blocked
+  //  {
+  //    do
+  //     {
+  //        turnLeft(); // turn left BY DEFAULT, as target tracking hovering is turn right
+  //     }while(digitalRead{sensor_Mid}) // while mid sensor still trigered
+  //  }
+  //}
+  
+
+                 
+                 
+  // motion control code from rpi to arduino below:
   if(digitalRead(mov0) == 0 && digitalRead(mov1) == 0 && digitalRead(mov2) == 0 && digitalRead(mov3) == 1)
   {
     Serial.println("goStraight");
