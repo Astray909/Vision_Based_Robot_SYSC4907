@@ -47,66 +47,74 @@ void setup() {
   // pinMode(debug2, INPUT); //Ocuppied by sensor, dont use!
   
   // sensor setup begings here: uncomment when testing
-  pinMode(sensor_Mid, INPUT); // pin11 set as digital input from mid sensor
-  pinMode(sensor_Left, INPUT); // pin12 set as digital input from left sensor
-  pinMode(sensor_Right, INPUT); // pin13 set as digital input from right sensor
+  pinMode(sesM, INPUT); // pin11 set as digital input from mid sensor
+  pinMode(sesL, INPUT); // pin12 set as digital input from left sensor
+  pinMode(sesR, INPUT); // pin13 set as digital input from right sensor
   
   Serial.begin(9600);
 }
 
 void loop() {
+  // put your main code here, to run repeatedly:
   int cmdEn = 1; // Arduino only takes user commands when cmdEn = 1;
   
-  // put your main code here, to run repeatedly:
-  //senor condition code below: uncomment when testing
+  // sensor reading bitshift sesR = (sesL, sesM, sesR)
+  int sesR =(((digitalRead(sesL)<<2) | (digitalRead(sesM)<<1) | digitalRead(sesR))
+  // 000 == CASE0 == collision detected in : NONE
+  // 001 == CASE1 == collision detected in : right
+  // 010 == CASE2 == collision detected in : mid
+  // 011 == CASE3 == collision detected in : mid, right
+  // 100 == CASE4 == collision detected in : left
+  // 101 == CASE5 == collision detected in : left, right
+  // 110 == CASE6 == collision detected in : left, mid
+  // 111 == CASE7 == collision detected in : left, mid, right
   
-  //midS = digitalRead(sensor_Mid);   // midS = readings from mid sensor, HIGH = collision, LOW = clear
-  //lftS = digitalRead(sensor_Left);  // lftS = readings from left sensor
-  //rgtS = digitalRead(sensor_Right); // rgtS = readings from right sensor
-  
-  if (digitalRead(sensor_Mid) == HIGH) // if middle sensor detect collision
+  if (sesR == 2 || sesR == 3 || sesR == 6 || sesR == 7) // if middle sensor detect collision
   {
     cmdEn = 0;  //stop taking command and enter collision avoidance
-    stop(); // First, robot stop and enter collision avoidance
-    if (digitalRead(sensor_Left) == LOW) // if left sensor is clear,
+    stop(); // First, robot stop check sensor stats
+    if (sesR == 2 || sesR == 3) // if left sensor is clear,
       {
-        while(digitalRead(sensor_Right == HIGH) // while mid sensor still trigered
+        while(sesR == 2 || sesR == 3) // while mid sensor still trigered
         {
            turnLeft(); // turn left
         }
-        while(digitalRead(sensor_Mid) == LOW && rgtS = digitalRead(sensor_Right) == HIGH) // while obstacle on the front right
+        while(sesR == 1 || sesR == 4 || sesR == 5) // while obstacle on the front left/right
         {
            goStraight();   // goStraight avoid collision
         }
-        delay (1000);      // keep goStraight for 2sec
+        //goStraight();
+        delay (1000);      // keep goStraight for 1sec
         stop();
         cmdEn = 1;  //exit collision avoidance, resume taking order
       }
-    else if (digitalRead(sensor_Left) == HIGH && digitalRead(sensor_Right) == low) // if only right sensor is clear,
+    else if (sesR ==  6) // if only right sensor is clear,
       {
-        while(digitalRead(sensor_Mid) == HIGH) // while mid still blocked
+        while(sesR ==  6) // while mid still blocked
          {
            turnRight(); // turn right
          }
-         while(digitalRead(sensor_Mid) == LOW && digitalRead(sensor_Left) == HIGH) // while obstacle on the front left
+         while(sesR == 1 || sesR == 4 || sesR == 5) // while obstacle on the front left/right
          {
            goStraight();   // goStraight avoid collision
          }
-         delay (1000);      // keep goStraight for 2sec
+         //goStraight();
+         delay (1000);      // keep goStraight for 1sec
          stop();
          cmdEn = 1;  //exit collision avoidance, resume taking order
       }
     else  // all sensors blocked
     {
-      while(digitalRead(sensor_Mid) == HIGH) // while mid sensor still trigered
+      while(sesR == 7) // while mid sensor still trigered
        {
           turnLeft(); // turn left BY DEFAULT, as target tracking hovering is turn right
        }
-       while(digitalRead(sensor_Mid) == LOW && digitalRead(sensor_Right) == HIGH) // while obstacle on the front right
+       while(sesR == 1 || sesR == 4 || sesR == 5) // while obstacle on the front left/right
        {
           goStraight();   // goStraight avoid collision
        }
-       delay (1000);      // keep goStraight for 2sec
+       //goStraight();
+       delay (1000);      // keep goStraight for 1sec
        stop();
        cmdEn = 1;  //exit collision avoidance, resume taking order
     }
@@ -128,21 +136,27 @@ void loop() {
       case0:
         Serial.println("cmdC == 0 == stop");
         stop();
+        break;
       case 1:
         Serial.println("cmdC == 1 == goStraight");
         goStraight();
+        break;
       case 2:
         Serial.println("cmdC == 2 == spinLeft");
         turnLeft();
+        break;
       case 3:
         Serial.println("cmdC == 3 == spinRight");
         turnRight();
+        break;
       case 4:
         Serial.println("cmdC == 4 == curveLeft");
         curveLeft();
+        break;
       case 5:
         Serial.println("cmdC == 5 == curveRight");
         curveRight();
+        break;
     }
     delay(10);    //delay 10ms between each read for stability
   }
@@ -224,4 +238,28 @@ void curveRight()   //run both motors in the same direction
   // turn on motor B
   digitalWrite(In3, LOW);
   digitalWrite(In4, HIGH);
+}
+
+void backLeft()   //run both motors in the same direction
+{
+  analogWrite(EnA, 200);
+  analogWrite(EnB, 100);
+  // turn on motor A
+  digitalWrite(In1, LOW);
+  digitalWrite(In2, HIGH);
+  // turn on motor B
+  digitalWrite(In3, HIGH);
+  digitalWrite(In4, LOW);
+}
+
+void backRight()   //run both motors in the same direction
+{
+  analogWrite(EnA, 100);
+  analogWrite(EnB, 200);
+  // turn on motor A
+  digitalWrite(In1, LOW);
+  digitalWrite(In2, HIGH);
+  // turn on motor B
+  digitalWrite(In3, HIGH);
+  digitalWrite(In4, LOW);
 }
