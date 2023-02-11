@@ -50,16 +50,20 @@ void setup() {
   Serial.begin(9600);
   
   // sensor setup begings here: uncomment when testing
-  // pinMode(sensor_Left, INPUT); // pin12 set as input from left sensor
-  // pinMode(sensor_Right, INPUT); // pin13 set as input from right sensor
-  // pinMode(sensor_Mid, INPUT); // pin0 set as input from mid sensor
+  // pinMode(sensor_Left, INPUT); // pin12 set as digital input from left sensor
+  // pinMode(sensor_Right, INPUT); // pin13 set as digital input from right sensor
+  // pinMode(sensor_Mid, INPUT); // pin0 set as digital input from mid sensor
 }
 
+
 void loop() {
+  //int cmd = 1; // Arduino only takes user commands when cmd = 1;
+  
   // put your main code here, to run repeatedly:
   //senor condition code below: uncomment when testing
   // if (digitalRead{sensor_Mid}) // if middle sensor detect collision
   //{
+  //  cmd = 0;
   //  stop(); // First, robot stop and enter collision avoidance
   //  if (!digitalRead{sensor_Left}) // if left sensor is clear,
   //    {
@@ -86,7 +90,8 @@ void loop() {
   
 
                  
-                 
+  //while (cmd == 1)
+  //{
   // motion control code from rpi to arduino below:
   if(digitalRead(mov0) == 0 && digitalRead(mov1) == 0 && digitalRead(mov2) == 0 && digitalRead(mov3) == 1)
   {
@@ -133,6 +138,8 @@ void loop() {
     Serial.println("stop");
     stop();
   }
+  //}
+  
 }
 
 void stop()
@@ -236,3 +243,4 @@ void backRight()   //run both motors in the same direction
   digitalWrite(In3, HIGH);
   digitalWrite(In4, LOW);
 }
+
