@@ -84,8 +84,12 @@ void loop() {
            goStraight();   // goStraight avoid collision
         }
         //goStraight();
-        delay (1000);      // keep goStraight for 1sec
-        stop();
+        if (sesR != 2 || sesR != 3 || sesR != 6 || sesR != 7) // if mid sensor cleared, no collision risk
+        {
+           delay (1000);      // keep goStraight for 1sec
+           break;
+        }
+        stop();     //stop for target reacquire
         cmdEn = 1;  //exit collision avoidance, resume taking order
       }
     else if (sesR ==  6) // if only right sensor is clear,
@@ -99,8 +103,12 @@ void loop() {
            goStraight();   // goStraight avoid collision
          }
          //goStraight();
-         delay (1000);      // keep goStraight for 1sec
-         stop();
+         if (sesR != 2 || sesR != 3 || sesR != 6 || sesR != 7) // if mid sensor cleared, no collision risk
+         {
+           delay (1000);      // keep goStraight for 1sec
+           break;
+         }
+         stop();     //stop for target reacquire
          cmdEn = 1;  //exit collision avoidance, resume taking order
       }
     else  // all sensors blocked
@@ -114,8 +122,12 @@ void loop() {
           goStraight();   // goStraight avoid collision
        }
        //goStraight();
-       delay (1000);      // keep goStraight for 1sec
-       stop();
+       if (sesR != 2 || sesR != 3 || sesR != 6 || sesR != 7) // if mid sensor cleared, no collision risk
+       {
+          delay (1000);      // keep goStraight for 1sec
+          break;
+       }
+       stop();     //stop for target reacquire
        cmdEn = 1;  //exit collision avoidance, resume taking order
     }
   }
