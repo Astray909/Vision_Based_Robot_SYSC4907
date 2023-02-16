@@ -70,12 +70,16 @@ void loop() {
     }
     switch (sesR)         // Switch case based on sesR(sensor reading)
     {
-      case 0:
+      case 0:             
+      {
+        Serial.println("sesR: 000 -> False Alarm, check needed");
+        break;
+      }
       case 1:
       case 4:
       case 5:             // Obstacle on Left/Right and Mid sensor cleared
       {
-        Serial.println("sesR: 000/001/100/101 -> Go Straight");
+        Serial.println("sesR: 001/100/101 -> Go Straight");
         goStraight();     // Go straight
         break;
       }
@@ -108,14 +112,14 @@ void loop() {
   // motion control code from rpi to arduino below:               
   // Create command case variable cmdC using bit shifting:
   int cmdC =(((digitalRead(mov2)<<2) | (digitalRead(mov1)<<1) | digitalRead(mov0))；
-                        //000 == CASE0 == STOP
-                        //001 == CASE1 == STRAIGHT
-                        //010 == CASE2 == LEFT_Spin
-                        //011 == CASE3 == RIGHT_Spin
-                        //100 == CASE4 == LEFT_Curve
-                        //101 == CASE5 == RIGHT_Curve
-                        //110 == CASE6 == LEFTB     <= NOT USED
-                        //111 == CASE7 == RIGHTB    <= NOT USED
+                          //000 == CASE0 == STOP
+                          //001 == CASE1 == STRAIGHT
+                          //010 == CASE2 == LEFT_Spin
+                          //011 == CASE3 == RIGHT_Spin
+                          //100 == CASE4 == LEFT_Curve
+                          //101 == CASE5 == RIGHT_Curve
+                          //110 == CASE6 == LEFTB     <= NOT USED
+                          //111 == CASE7 == RIGHTB    <= NOT USED
     switch(cmdC)
     {
       case 0:
