@@ -16,9 +16,9 @@
 // #define debug2 11 //Ocuppied by sensor, dont use!
 
 // Sensor connection defined below. Uncomment when testing.
-int sensor_Mid_pin=11;
-int sensor_Left_pin=12;
-int sensor_Right_pin=13;
+int sesM=11;
+int sesL=12;
+int sesR=13;
 
 void setup() {
   // put your setup code here, to run once:
