@@ -17,9 +17,9 @@
 #define In4 10
 
 // Sensor connection defined below. Uncomment when testing.
-#define sesL 11
-#define sesM 12
-#define sesR 13
+#define ses_L 11
+#define ses_M 12
+#define ses_R 13
 
 void setup() {
   // put your setup code here, to run once:
@@ -40,9 +40,9 @@ void setup() {
   pinMode(In4, OUTPUT);
   
   // All sensors pins are inputs
-  pinMode(sesM, INPUT);   // pin11 set as digital input from mid sensor
-  pinMode(sesL, INPUT);   // pin12 set as digital input from left sensor
-  pinMode(sesR, INPUT);   // pin13 set as digital input from right sensor
+  pinMode(ses_M, INPUT);   // pin11 set as digital input from mid sensor
+  pinMode(ses_L, INPUT);   // pin12 set as digital input from left sensor
+  pinMode(ses_R, INPUT);   // pin13 set as digital input from right sensor
   
   Serial.begin(9600);
 }
@@ -54,7 +54,8 @@ void loop() {
   
   if(mSEL==0)             // If NOT in Manual Control Mode
   {                       // sensor reading bitshift sesR = (sesL, sesM, sesR)
-    int sesR =(((digitalRead(sesL)<<2) | (digitalRead(sesM)<<1) | digitalRead(sesR))；
+    int sesR = ((digitalRead(ses_L)<<2) | (digitalRead(ses_M)<<1) | digitalRead(ses_R));
+
                           // 000 == CASE0 == collision detected in : NONE
                           // 001 == CASE1 == collision detected in : right
                           // 010 == CASE2 == collision detected in : mid
@@ -111,7 +112,7 @@ void loop() {
   
   // motion control code from rpi to arduino below:               
   // Create command case variable cmdC using bit shifting:
-  int cmdC =(((digitalRead(mov2)<<2) | (digitalRead(mov1)<<1) | digitalRead(mov0))；
+  int cmdC = ((digitalRead(mov2<<2)) | (digitalRead(mov1<<1)) | digitalRead(mov0));
                           //000 == CASE0 == STOP
                           //001 == CASE1 == STRAIGHT
                           //010 == CASE2 == LEFT_Spin
