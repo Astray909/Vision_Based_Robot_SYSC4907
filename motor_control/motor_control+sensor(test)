@@ -160,7 +160,7 @@ void loop() {
       }
       default:
       {
-        Serial.println("cmdC: ERROR VALUE");
+        Serial.println("cmdC: ERROR VALUE, unknown command");
         break;
       }
     }
