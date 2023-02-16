@@ -92,7 +92,7 @@ void loop() {
         turnLeft();       // Turn left
         break;
       }
-      case 6:             // Only Left sensor is cleared
+      case 6:             // Only Right sensor is cleared
       {
         Serial.println("sesR: 110 -> Turn Right");
         turnRight();      // Turn right
