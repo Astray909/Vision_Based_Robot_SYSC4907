@@ -6,7 +6,7 @@
 #define mov2 4
 
 // Manual Command Mode Selection
-#define mSEL 1
+#define mRED 1
 
 // Pins to motor controllers 
 #define EnA 5   
@@ -29,7 +29,7 @@ void setup() {
   pinMode(mov2, INPUT);
   
   // Manual Command Mode Selection
-  pinMode(mSEL, INPUT);
+  pinMode(mRED, INPUT);   // mRED=1=ManualControl(Collision Avoid Disabled)
   
   // All motor control pins are outputs
   pinMode(EnA, OUTPUT);
@@ -40,34 +40,34 @@ void setup() {
   pinMode(In4, OUTPUT);
   
   // All sensors pins are inputs
-  pinMode(sesM, INPUT); // pin11 set as digital input from mid sensor
-  pinMode(sesL, INPUT); // pin12 set as digital input from left sensor
-  pinMode(sesR, INPUT); // pin13 set as digital input from right sensor
+  pinMode(sesM, INPUT);   // pin11 set as digital input from mid sensor
+  pinMode(sesL, INPUT);   // pin12 set as digital input from left sensor
+  pinMode(sesR, INPUT);   // pin13 set as digital input from right sensor
   
   Serial.begin(9600);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  int mSEL = digital
+  int mSEL = digitalRead(mRED);
   int cmdEn = 1; // Arduino only takes user commands when cmdEn = 1;
   
-  if()
-  // sensor reading bitshift sesR = (sesL, sesM, sesR)
-  int sesR =(((digitalRead(sesL)<<2) | (digitalRead(sesM)<<1) | digitalRead(sesR))
-  // 000 == CASE0 == collision detected in : NONE
-  // 001 == CASE1 == collision detected in : right
-  // 010 == CASE2 == collision detected in : mid
-  // 011 == CASE3 == collision detected in : mid, right
-  // 100 == CASE4 == collision detected in : left
-  // 101 == CASE5 == collision detected in : left, right
-  // 110 == CASE6 == collision detected in : left, mid
-  // 111 == CASE7 == collision detected in : left, mid, right
-  
-  if (sesR != 0)          // If any sensor detects collision
-  {
-    cmdEn=0;              // Stop taking command and enter collision avoidance
-  }
+  if(mSEL==0)             // If NOT in Manual Control Mode
+  {                       // sensor reading bitshift sesR = (sesL, sesM, sesR)
+    int sesR =(((digitalRead(sesL)<<2) | (digitalRead(sesM)<<1) | digitalRead(sesR))；
+                          // 000 == CASE0 == collision detected in : NONE
+                          // 001 == CASE1 == collision detected in : right
+                          // 010 == CASE2 == collision detected in : mid
+                          // 011 == CASE3 == collision detected in : mid, right
+                          // 100 == CASE4 == collision detected in : left
+                          // 101 == CASE5 == collision detected in : left, right
+                          // 110 == CASE6 == collision detected in : left, mid
+                          // 111 == CASE7 == collision detected in : left, mid, right
+    
+    if (sesR != 0)        // If any sensor detects collision
+    {
+      cmdEn=0;            // Stop taking command and enter collision avoidance
+    }
     switch (sesR)         // Switch case based on sesR(sensor reading)
     {
       case 0:
@@ -98,6 +98,7 @@ void loop() {
         Serial.println("sesR: ERROR VALUE");
         break;
       }
+    }
   }
   
   if (cmdEn=0) {          // if cmdEn=0, function in target avoidance
@@ -106,15 +107,15 @@ void loop() {
   
   // motion control code from rpi to arduino below:               
   // Create command case variable cmdC using bit shifting:
-  int cmdC =(((digitalRead(mov2)<<2) | (digitalRead(mov1)<<1) | digitalRead(mov0))
-  //000 == CASE0 == STOP
-  //001 == CASE1 == STRAIGHT
-  //010 == CASE2 == LEFT_Spin
-  //011 == CASE3 == RIGHT_Spin
-  //100 == CASE4 == LEFT_Curve
-  //101 == CASE5 == RIGHT_Curve
-  //110 == CASE6 == LEFTB     <= NOT USED
-  //111 == CASE7 == RIGHTB    <= NOT USED
+  int cmdC =(((digitalRead(mov2)<<2) | (digitalRead(mov1)<<1) | digitalRead(mov0))；
+                        //000 == CASE0 == STOP
+                        //001 == CASE1 == STRAIGHT
+                        //010 == CASE2 == LEFT_Spin
+                        //011 == CASE3 == RIGHT_Spin
+                        //100 == CASE4 == LEFT_Curve
+                        //101 == CASE5 == RIGHT_Curve
+                        //110 == CASE6 == LEFTB     <= NOT USED
+                        //111 == CASE7 == RIGHTB    <= NOT USED
     switch(cmdC)
     {
       case 0:
