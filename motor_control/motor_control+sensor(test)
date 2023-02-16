@@ -49,36 +49,34 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  int mSEL = digitalRead(mRED);
-  int cmdEn = 1; // Arduino only takes user commands when cmdEn = 1;
+  int mSEL = digitalRead(mRED);// Determine if Arduino is in Manual Command Mode
+  int cmdEn = 1;          // Arduino only takes user commands when cmdEn = 1;
   
   if(mSEL==0)             // If NOT in Manual Control Mode
   {                       // sensor reading bitshift sesR = (sesL, sesM, sesR)
     int sesR = ((digitalRead(ses_L)<<2) | (digitalRead(ses_M)<<1) | digitalRead(ses_R));
-
                           // 000 == CASE0 == collision detected in : NONE
-                          // 001 == CASE1 == collision detected in : right
-                          // 010 == CASE2 == collision detected in : mid
-                          // 011 == CASE3 == collision detected in : mid, right
-                          // 100 == CASE4 == collision detected in : left
-                          // 101 == CASE5 == collision detected in : left, right
-                          // 110 == CASE6 == collision detected in : left, mid
-                          // 111 == CASE7 == collision detected in : left, mid, right
-    
+                          // 001 == CASE1 == collision detected in :      ,     , right
+                          // 010 == CASE2 == collision detected in :      , mid ,
+                          // 011 == CASE3 == collision detected in :      , mid , right
+                          // 100 == CASE4 == collision detected in : left ,
+                          // 101 == CASE5 == collision detected in : left ,     , right
+                          // 110 == CASE6 == collision detected in : left , mid ,
+                          // 111 == CASE7 == collision detected in : left , mid , right
     if (sesR != 0)        // If any sensor detects collision
     {
       cmdEn=0;            // Stop taking command and enter collision avoidance
     }
     switch (sesR)         // Switch case based on sesR(sensor reading)
     {
-      case 0:             
+      case 0:             // All sensor cleared, dont do anything
       {
-        Serial.println("sesR: 000 -> False Alarm, check needed");
+        Serial.println("sesR: 000 -> All Sensors Cleared");
         break;
       }
       case 1:
       case 4:
-      case 5:             // Obstacle on Left/Right and Mid sensor cleared
+      case 5:             // Obstacle on Left/Right & Mid sensor cleared
       {
         Serial.println("sesR: 001/100/101 -> Go Straight");
         goStraight();     // Go straight
@@ -107,6 +105,7 @@ void loop() {
   }
   
   if (cmdEn=0) {          // if cmdEn=0, function in target avoidance
+    delay(10);            // Delay 10ms, avoid system overload
     return;               // End this loop, no user command intake
   }
   
@@ -165,7 +164,7 @@ void loop() {
         break;
       }
     }
-    delay(1);    //delay 1ms between each read for stability
+    delay(10);    //delay 10ms between each read for stability
     //END OF LOOP MAIN
 }
 
