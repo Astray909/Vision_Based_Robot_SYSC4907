@@ -5,11 +5,14 @@ from PyQt5.QtGui import *
 from PyQt5.QtMultimedia import *
 from PyQt5.QtMultimediaWidgets import*
 from PyQt5.QtWidgets import *
-from Communication_testing import client_manual
+import pynput
 
 class Window(QWidget):
+
       def __init__(self):
          super().__init__()
+
+
 
 
          self.setGeometry(100,100,800,600)
@@ -26,17 +29,19 @@ class Window(QWidget):
 
 
          buttonForward = QPushButton()
-         buttonReverse = QPushButton()
+         buttonStop = QPushButton()
          buttonTurnLeft = QPushButton()
          buttonTurnRight = QPushButton()
 
          buttonForward.setText("Forward")
          buttonForward.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
-         buttonForward.clicked.connect(client_manual.check_key('w'))
+         buttonForward.clicked.connect(self.button_was_clicked)
+
+
          grid.addWidget(buttonForward,5,2)
-         buttonReverse.setText("Reverse")
-         buttonReverse.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
-         grid.addWidget(buttonReverse,6,2)
+         buttonStop.setText("Stop")
+         buttonStop.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+         grid.addWidget(buttonStop,6,2)
          buttonTurnLeft.setText("Turn Left")
          buttonTurnLeft.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
          grid.addWidget(buttonTurnLeft, 5,1,2,1)
@@ -96,6 +101,10 @@ class Window(QWidget):
          error.showMessage(msg)
 
 
+      def button_was_clicked(self):
+          keyboard = pynput.keyboard.Controller()
+          keyboard.press('w')
+          print('w')
 if __name__ == '__main__':
    App = QApplication(sys.argv)
    window = Window()
