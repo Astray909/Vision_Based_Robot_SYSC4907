@@ -9,8 +9,8 @@
 #define mRED 1
 
 // Pins to motor controllers 
-#define EnA 5   
-#define EnB 6
+#define EnA 5           // PWM
+#define EnB 6           // PWM
 #define In1 7
 #define In2 8
 #define In3 9
