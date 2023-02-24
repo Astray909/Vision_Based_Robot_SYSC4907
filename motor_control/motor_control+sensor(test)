@@ -6,7 +6,7 @@
 #define mov2 4
 
 // Manual Command Mode Selection
-#define mRED 1
+#define mRED 11
 
 // Pins to motor controllers 
 #define EnA 5           // PWM
@@ -17,9 +17,9 @@
 #define In4 10
 
 // Sensor connection defined below. Uncomment when testing.
-#define ses_L 11
-#define ses_M 12
-#define ses_R 13
+//#define ses_L 11
+//#define ses_M 12
+//#define ses_R 13
 
 void setup() {
   // put your setup code here, to run once:
