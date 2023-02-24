@@ -17,9 +17,9 @@
 #define In4 10
 
 // Sensor connection defined below. Uncomment when testing.
-//#define ses_L 11
-//#define ses_M 12
-//#define ses_R 13
+#define ses_L A1
+#define ses_M A2
+#define ses_R A3
 
 void setup() {
   // put your setup code here, to run once:
