@@ -6,17 +6,17 @@
 #define mov2 4
 
 // Manual Command Mode Selection
-#define mRED 11
+#define mRED 5
 
 // Pins to motor controllers 
-#define EnA 5           // PWM
-#define EnB 6           // PWM
-#define In1 7
-#define In2 8
-#define In3 9
-#define In4 10
+#define EnA 10           // PWM
+#define EnB 11           // PWM
+#define In1 6
+#define In2 7
+#define In3 8
+#define In4 9
 
-// Sensor connection defined below. Uncomment when testing.
+// Sensor connection defined below. Analog as Digital input
 #define ses_L A1
 #define ses_M A2
 #define ses_R A3
