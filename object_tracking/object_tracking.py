@@ -113,6 +113,23 @@ def tracking():
             cv2.rectangle(frame, bbox, (0, 255, 0), 2)
             cv2.putText(frame, f"Size: {actual_size:.2f} cm", (bbox[0], bbox[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
+            # Extract the x, y coordinates of the bounding box
+            x, y, w, h = [int(i) for i in bbox]
+            center_x, center_y = x + w // 2, y + h // 2
+
+            # Calculate the center zone boundaries
+            center_zone_width = 0.2  # example width of center zone as a fraction of the frame width
+            center_zone_left = int((1 - center_zone_width) / 2 * frame.shape[1])
+            center_zone_right = int((1 + center_zone_width) / 2 * frame.shape[1])
+
+            # Determine if bounding box is in left, right or center zone
+            if center_x < center_zone_left:
+                print("Bounding box is in left zone.")
+            elif center_zone_left <= center_x <= center_zone_right:
+                print("Bounding box is in center zone.")
+            else:
+                print("Bounding box is in right zone.")
+
         # Display frame with bounding box
         cv2.imshow("Frame", frame)
 

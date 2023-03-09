@@ -11,7 +11,7 @@ BUFF_SIZE = 524288
 server_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 server_socket.setsockopt(socket.SOL_SOCKET,socket.SO_RCVBUF,BUFF_SIZE)
 
-host_ip = '127.0.0.1'
+host_ip = 'raspberrypi.local'
 socket_address = (host_ip, 9999)
 print(host_ip)
 
