@@ -45,8 +45,8 @@ while True:
         message = base64.b64encode(buffer.getvalue())
 
         # get current time in seconds
-        dt = datetime.now()
-        ts = datetime.timestamp(dt)
+        dt = datetime.datetime.now()
+        ts = datetime.datetime.timestamp(dt)
 
         # pack time in header
         udp_header = struct.pack('d', ts)
