@@ -19,26 +19,12 @@ def is_hand_open(hand_landmarks):
     thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
     index_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
     distance = math.sqrt((thumb_tip.x - index_tip.x)**2 + (thumb_tip.y - index_tip.y)**2 + (thumb_tip.z - index_tip.z)**2)
-    
     # Check if index and thumb are both extended
     if (hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_IP].x < hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_MCP].x and
         hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].x < hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_MCP].x):
-        
-        # Check if other fingers are open or closed
-        if (hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_TIP].y < hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_MCP].y and
-            hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_TIP].y < hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_MCP].y and
-            hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_TIP].y < hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_MCP].y):
-            
-            # Check if hand is pointing left or right
-            if hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].x < hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_TIP].x:
-                return "point left"
-            else:
-                return "point right"
-        else:
-            return "open hand"
+        return "open hand"
     else:
         return "closed hand"
-
 
 # Start capturing frames from webcam
 with mp_hands.Hands(
