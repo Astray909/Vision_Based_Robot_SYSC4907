@@ -14,25 +14,24 @@ def draw_landmarks(image, hand_landmarks):
         x, y = int(landmark.x * image.shape[1]), int(landmark.y * image.shape[0])
         cv2.circle(image, (x, y), 5, (0, 255, 0), -1)
 
-# Define function to check if hand is open or closed and pointing direction
 def is_hand_open(hand_landmarks):
     # Check distance between thumb and index finger
     thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
     index_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
     distance = math.sqrt((thumb_tip.x - index_tip.x)**2 + (thumb_tip.y - index_tip.y)**2 + (thumb_tip.z - index_tip.z)**2)
     # Check if index and thumb are both extended
-    if (hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_IP].y < hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_MCP].y and
-        hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y < hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_MCP].y):
+    if (hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_IP].x < hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_MCP].x and
+        hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].x < hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_MCP].x):
         # Calculate angle between x-axis and line formed by index and thumb tips
-        # angle = math.degrees(math.atan2(thumb_tip.y - index_tip.y, thumb_tip.x - index_tip.x))
-        # if angle < -20:
-        #     return "Open left"
-        # elif angle > 20:
-        #     return "Open right"
-        # else:
-        return "Open"
+        angle = math.degrees(math.atan2(thumb_tip.y - index_tip.y, thumb_tip.x - index_tip.x))
+        if angle < -20:
+            return "point left"
+        elif angle > 20:
+            return "point right"
+        else:
+            return "open hand"
     else:
-        return "Closed"
+        return "closed hand"
 
 # Start capturing frames from webcam
 with mp_hands.Hands(
