@@ -1,10 +1,10 @@
 import time
-import datetime
 import base64
 import struct
 import socket
 from PIL import Image
 import io
+import datetime
 
 BUFF_SIZE = 524288
 server_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
@@ -34,10 +34,10 @@ while True:
     # read frames from video capture device
     while True:
         # read the frame
-        frame = vid.read(640*480*3)
+        frame = vid.read(320*240*3)
 
         # resize the frame
-        frame = Image.frombytes('RGB', (640, 480), frame).resize((500, 500))
+        frame = Image.frombytes('RGB', (320, 240), frame).resize((160, 120))
 
         # downscale quality
         buffer = io.BytesIO()
