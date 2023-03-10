@@ -5,6 +5,7 @@ import time
 import base64
 from datetime import datetime
 import struct
+import os
 
 
 BUFF_SIZE = 524288
@@ -18,62 +19,68 @@ print(host_ip)
 server_socket.bind(socket_address)
 print('Listening at:',socket_address)
 
-vid = cv2.VideoCapture(0, cv2.CAP_V4L2)
+vid = cv2.VideoCapture(0)
 vid.set(cv2.CAP_PROP_FPS, 20)
-vid.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-vid.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
 previous_timeframe = 0
 new_timeframe = 0
 
+# Run OpenCV in headless mode
+os.environ['DISPLAY'] = ':0'
+os.environ['PYVISTA_OFF_SCREEN'] = 'true'
+
 def make_720p():
-    vid.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-    vid.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+    frame.set(3, 1280)
+    frame.set(4, 720)
 
 
 while True:
-	msg,client_addr = server_socket.recvfrom(BUFF_SIZE)
-	print('connected from',client_addr)
-	
-	# open vid
-	while(vid.isOpened()):
-		temp,frame = vid.read()
-		
-		fps2 = int(vid.get(cv2.CAP_PROP_FPS))
-		print("fps:", fps2)
+    msg,client_addr = server_socket.recvfrom(BUFF_SIZE)
+    print('connected from',client_addr)
+    
+    # open vid
+    while(vid.isOpened()):
+        temp,frame = vid.read()
+        
+        fps2 = int(vid.get(cv2.CAP_PROP_FPS))
+        print("fps:", fps2)
 
-		# resize vid
-		frame = imutils.resize(frame, width = 500)
-		#frame = cv2.resize(frame, (720, 480))
+        # resize vid
+        frame = imutils.resize(frame, width = 500)
+        #frame = cv2.resize(frame, (720, 480))
 
-		#downscale quality
-		encoded,buffer = cv2.imencode('.jpg',frame,[cv2.IMWRITE_JPEG_QUALITY,80])
+        #downscale quality
+        encoded,buffer = cv2.imencode('.jpg',frame,[cv2.IMWRITE_JPEG_QUALITY,80])
 
-		#encode to base64 (bytes)
-		message = base64.b64encode(buffer)
+        #encode to base64 (bytes)
+        message = base64.b64encode(buffer)
 
-		# get current time in seconds
-		dt = datetime.now()
-		ts = datetime.timestamp(dt)
+        # get current time in seconds
+        dt = datetime.now()
+        ts = datetime.timestamp(dt)
 
-		# pack time in header
-		udp_header = struct.pack('d', ts)
+        # pack time in header
+        udp_header = struct.pack('d', ts)
 
-		# add header and franes and send
-		message = udp_header + message
-		server_socket.sendto(message,client_addr)
-		
-		# math to get FPS
-		new_timeframe = time.time()
-		fps = 1/(new_timeframe-previous_timeframe)
-		previous_timeframe=new_timeframe
-		fps=int(fps)
-		
-		# put fps on screen
-		cv2.putText(frame,str(fps),(10,30), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,1,(25,255,0),4)
-		
-		cv2.imshow('SERVER VIDEO',frame)
-		key = cv2.waitKey(1) & 0xFF
-		if key == ord('q'):
-			server_socket.close()
-			break
+        # add header and franes and send
+        message = udp_header + message
+        server_socket.sendto(message,client_addr)
+        
+        # math to get FPS
+        new_timeframe = time.time()
+        fps = 1/(new_timeframe-previous_timeframe)
+        previous_timeframe=new_timeframe
+        fps=int(fps)
+        
+        # put fps on screen
+        # cv2.putText(frame,str(fps),(10,30), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,1,(25,255,0),4)
+        
+        # Remove display of the video
+        # cv2.imshow('SERVER VIDEO',frame)
+        
+        # Remove wait for user input
+        # key = cv2.waitKey(1) & 0xFF
+        # if key == ord('q'):
+        #     server_socket.close()
+        #     break
+        
