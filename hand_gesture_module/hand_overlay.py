@@ -24,13 +24,13 @@ def is_hand_open(hand_landmarks):
     if (hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_IP].y < hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_MCP].y and
         hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y < hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_MCP].y):
         # Calculate angle between x-axis and line formed by index and thumb tips
-        angle = math.degrees(math.atan2(thumb_tip.y - index_tip.y, thumb_tip.x - index_tip.x))
-        if angle < -20:
-            return "Open left"
-        elif angle > 20:
-            return "Open right"
-        else:
-            return "Open"
+        # angle = math.degrees(math.atan2(thumb_tip.y - index_tip.y, thumb_tip.x - index_tip.x))
+        # if angle < -20:
+        #     return "Open left"
+        # elif angle > 20:
+        #     return "Open right"
+        # else:
+        return "Open"
     else:
         return "Closed"
 
