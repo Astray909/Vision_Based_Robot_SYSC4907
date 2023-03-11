@@ -3,17 +3,6 @@ import socket
 import numpy as np
 import time
 import base64
-
-
-#0000STOP
-#0001STRAIGHT
-#0010BACK
-#0011LEFT
-#0100RIGHT
-#0101LEFTC
-#0110RIGHTC
-#0111LEFTB
-#1000RIGHTB
 import RPi.GPIO as GPIO
 
 # Pin Setup:
@@ -50,50 +39,49 @@ GPIO.output(mov2, GPIO.LOW)
 GPIO.output(switch, GPIO.LOW)
 
 while True:
-	msg,client_addr = server_socket.recvfrom(BUFF_SIZE)
-	print('connected from',client_addr)
-	#forward
-	if msg == b'w':
-		print('w')
-		GPIO.output(mov0, GPIO.LOW)
-		GPIO.output(mov1, GPIO.LOW)
-		GPIO.output(mov2, GPIO.HIGH)
-	#LEFT
-	elif msg == b'a':
-		print('a')
-		GPIO.output(mov0, GPIO.LOW)
-		GPIO.output(mov1, GPIO.HIGH)
-		GPIO.output(mov2, GPIO.LOW)
-	#RIGHT
-	elif msg == b'd':
-		print('d')
-		GPIO.output(mov0, GPIO.LOW)
-		GPIO.output(mov1, GPIO.HIGH)
-		GPIO.output(mov2, GPIO.HIGH)
-	#LEFT SPIN
-	elif msg == b'q':
-		print('q')
-		GPIO.output(mov0, GPIO.HIGH)
-		GPIO.output(mov1, GPIO.LOW)
-		GPIO.output(mov2, GPIO.LOW)
-	# RIGHT SPIN
-	elif msg == b'e':
-		print('e')
-		GPIO.output(mov0, GPIO.HIGH)
-		GPIO.output(mov1, GPIO.LOW)
-		GPIO.output(mov2, GPIO.HIGH)
-	#STOP
-	elif msg == b'x':
-		print('x')
-		GPIO.output(mov0, GPIO.LOW)
-		GPIO.output(mov1, GPIO.LOW)
-		GPIO.output(mov2, GPIO.LOW)
-
-	#MODE SWITCH
-	elif msg == b'p':
-		print('switching modes')
-		if switch == 0:
-			GPIO.output(switch, GPIO.HIGH)
-		else:
-			GPIO.output(switch, GPIO.LOW)
-
+    msg,client_addr = server_socket.recvfrom(BUFF_SIZE)
+    print('connected from',client_addr)
+    #forward
+    if msg == b'w':
+        print('w')
+        GPIO.output(mov0, GPIO.LOW)
+        GPIO.output(mov1, GPIO.LOW)
+        GPIO.output(mov2, GPIO.HIGH)
+    #LEFT
+    elif msg == b'a':
+        print('a')
+        GPIO.output(mov0, GPIO.LOW)
+        GPIO.output(mov1, GPIO.HIGH)
+        GPIO.output(mov2, GPIO.LOW)
+    #RIGHT
+    elif msg == b'd':
+        print('d')
+        GPIO.output(mov0, GPIO.LOW)
+        GPIO.output(mov1, GPIO.HIGH)
+        GPIO.output(mov2, GPIO.HIGH)
+    #LEFT SPIN
+    elif msg == b'q':
+        print('q')
+        GPIO.output(mov0, GPIO.HIGH)
+        GPIO.output(mov1, GPIO.LOW)
+        GPIO.output(mov2, GPIO.LOW)
+    # RIGHT SPIN
+    elif msg == b'e':
+        print('e')
+        GPIO.output(mov0, GPIO.HIGH)
+        GPIO.output(mov1, GPIO.LOW)
+        GPIO.output(mov2, GPIO.HIGH)
+    #STOP
+    elif msg == b'x':
+        print('x')
+        GPIO.output(mov0, GPIO.LOW)
+        GPIO.output(mov1, GPIO.LOW)
+        GPIO.output(mov2, GPIO.LOW)
+        
+	#SWITCH
+    elif msg == b'p':
+        print('switching modes')
+        if switch == 0:
+            GPIO.output(switch, GPIO.HIGH)
+        else:
+            GPIO.output(switch, GPIO.LOW)
