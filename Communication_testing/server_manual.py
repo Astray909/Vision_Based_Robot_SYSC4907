@@ -30,6 +30,8 @@ print(host_ip)
 server_socket.bind(socket_address)
 print('Listening at:', socket_address)
 
+GPIO.cleanup()
+
 # vid = cv2.VideoCapture(0)
 GPIO.output(mov0, GPIO.LOW)
 GPIO.output(mov1, GPIO.LOW)
