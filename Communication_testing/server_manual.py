@@ -5,6 +5,7 @@ import time
 import base64
 import RPi.GPIO as GPIO
 
+GPIO.cleanup()
 # Pin Setup:
 GPIO.setmode(GPIO.BCM) # Broadcom pin-numbering scheme
 
@@ -29,8 +30,6 @@ print(host_ip)
 
 server_socket.bind(socket_address)
 print('Listening at:', socket_address)
-
-GPIO.cleanup()
 
 # vid = cv2.VideoCapture(0)
 GPIO.output(mov0, GPIO.LOW)
