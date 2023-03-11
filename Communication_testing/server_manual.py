@@ -31,12 +31,12 @@ server_socket.bind(socket_address)
 print('Listening at:', socket_address)
 
 # vid = cv2.VideoCapture(0)
-GPIO.output(mov0, GPIO.LOW)
-GPIO.output(mov1, GPIO.LOW)
-GPIO.output(mov2, GPIO.LOW)
+GPIO.output(mov0, GPIO.HIGH)
+GPIO.output(mov1, GPIO.HIGH)
+GPIO.output(mov2, GPIO.HIGH)
 
 #starts in manual mode
-GPIO.output(switch, GPIO.LOW)
+GPIO.output(switch, GPIO.HIGH)
 
 while True:
     msg,client_addr = server_socket.recvfrom(BUFF_SIZE)
