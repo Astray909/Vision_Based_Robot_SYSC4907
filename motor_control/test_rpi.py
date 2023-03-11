@@ -11,7 +11,7 @@ for pin in pins:
 while True:
     # set the pins to high
     for pin in pins:
-        GPIO.output(pin, GPIO.LOW)
+        GPIO.output(pin, GPIO.HIGH)
 
 # cleanup the GPIO pins
 GPIO.cleanup()
