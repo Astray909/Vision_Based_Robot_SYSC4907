@@ -1,0 +1,271 @@
+//Motor Connections
+//Change this if you wish to use another diagram
+// Command from Raspberry Pi
+#define mov0 2
+#define mov1 3
+#define mov2 4
+
+// Manual Command Mode Selection
+#define mRED 5
+
+// Pins to motor controllers 
+#define EnA 10           // PWM
+#define EnB 11           // PWM
+#define In1 6
+#define In2 7
+#define In3 8
+#define In4 9
+
+// Sensor connection defined below. Analog as Digital input
+#define ses_L A1
+#define ses_M A2
+#define ses_R A3
+
+void setup() {
+  // put your setup code here, to run once:
+  //bit shifting inputs as (mov2, mov1, mov0) in binary bits
+  pinMode(mov0, INPUT);
+  pinMode(mov1, INPUT);
+  pinMode(mov2, INPUT);
+  
+  // Manual Command Mode Selection
+  pinMode(mRED, INPUT);   // mRED=1=ManualControl(Collision Avoid Disabled)
+  
+  // All motor control pins are outputs
+  pinMode(EnA, OUTPUT);
+  pinMode(EnB, OUTPUT);
+  pinMode(In1, OUTPUT);
+  pinMode(In2, OUTPUT);
+  pinMode(In3, OUTPUT);
+  pinMode(In4, OUTPUT);
+  
+  // All sensors pins are inputs
+  pinMode(ses_M, INPUT);   // pin11 set as digital input from mid sensor
+  pinMode(ses_L, INPUT);   // pin12 set as digital input from left sensor
+  pinMode(ses_R, INPUT);   // pin13 set as digital input from right sensor
+  
+  Serial.begin(9600);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  int mSEL = digitalRead(mRED);// Determine if Arduino is in Manual Command Mode
+  int cmdEn = 1;          // Arduino only takes user commands when cmdEn = 1;
+  
+  if(mSEL==0)             // If NOT in Manual Control Mode
+  {                       // sensor reading bitshift sesR = (sesL, sesM, sesR)
+    int sesR = (((!digitalRead(ses_L))<<2) | (!(digitalRead(ses_M))<<1) | (!digitalRead(ses_R)));
+                          // 000 == CASE0 == collision detected in : NONE
+                          // 001 == CASE1 == collision detected in :      ,     , right
+                          // 010 == CASE2 == collision detected in :      , mid ,
+                          // 011 == CASE3 == collision detected in :      , mid , right
+                          // 100 == CASE4 == collision detected in : left ,
+                          // 101 == CASE5 == collision detected in : left ,     , right
+                          // 110 == CASE6 == collision detected in : left , mid ,
+                          // 111 == CASE7 == collision detected in : left , mid , right
+    if (sesR != 0)        // If any sensor detects collision
+    {
+      cmdEn=0;            // Stop taking command and enter collision avoidance
+    }
+    switch (sesR)         // Switch case based on sesR(sensor reading)
+    {
+      case 0:             // All sensor cleared, dont do anything
+      {
+        Serial.println("sesR: 000 -> All Sensors Cleared");
+        break;
+      }
+      case 1:
+      case 4:
+      case 5:             // Obstacle on Left/Right & Mid sensor cleared
+      {
+        Serial.println("sesR: 001/100/101 -> Go Straight");
+        goStraight();     // Go straight
+        break;
+      }
+      case 2:
+      case 3:             // Left sensor is cleared
+      case 7:             // All sensors blocked
+      {
+        Serial.println("sesR: 010/011/111 -> Turn Left");
+        turnLeft();       // Turn left
+        break;
+      }
+      case 6:             // Only Right sensor is cleared
+      {
+        Serial.println("sesR: 110 -> Turn Right");
+        turnRight();      // Turn right
+        break;
+      }
+      default:
+      {
+        Serial.println("sesR: ERROR VALUE");
+        break;
+      }
+    }
+  }
+  
+  if (cmdEn=0) {          // if cmdEn=0, function in target avoidance
+    delay(10);            // Delay 10ms, avoid system overload
+    return;               // End this loop, no user command intake
+  }
+  
+  // motion control code from rpi to arduino below:               
+  // Create command case variable cmdC using bit shifting:
+  int cmdC = ((digitalRead(mov2<<2)) | (digitalRead(mov1<<1)) | digitalRead(mov0));
+                          //000 == CASE0 == STOP
+                          //001 == CASE1 == STRAIGHT
+                          //010 == CASE2 == LEFT_Spin
+                          //011 == CASE3 == RIGHT_Spin
+                          //100 == CASE4 == LEFT_Curve
+                          //101 == CASE5 == RIGHT_Curve
+                          //110 == CASE6 == LEFTB     <= NOT USED
+                          //111 == CASE7 == RIGHTB    <= NOT USED
+    switch(cmdC)
+    {
+      case 0:
+      {
+        Serial.println("cmdC == 0 == stop");
+        stop();
+        break;
+      }
+      case 1:
+      {
+        Serial.println("cmdC == 1 == goStraight");
+        goStraight();
+        break;
+      }
+      case 2:
+      {
+        Serial.println("cmdC == 2 == spinLeft");
+        turnLeft();
+        break;
+      }
+      case 3:
+      {
+        Serial.println("cmdC == 3 == spinRight");
+        turnRight();
+        break;
+      }
+      case 4:
+      {
+        Serial.println("cmdC == 4 == curveLeft");
+        curveLeft();
+        break;
+      }
+      case 5:
+      {
+        Serial.println("cmdC == 5 == curveRight");
+        curveRight();
+        break;
+      }
+      default:
+      {
+        Serial.println("cmdC: ERROR VALUE, unknown command");
+        break;
+      }
+    }
+    delay(10);    //delay 10ms between each read for stability
+    //END OF LOOP MAIN
+}
+
+void stop()
+{
+  analogWrite(EnA, 0);
+  analogWrite(EnB, 0);
+}
+
+void goStraight()   //run both motors in the same direction
+{
+  analogWrite(EnA, 200);
+  analogWrite(EnB, 200);
+  // turn on motor A
+  digitalWrite(In1, HIGH);
+  digitalWrite(In2, LOW);
+  // turn on motor B
+  digitalWrite(In3, LOW);
+  digitalWrite(In4, HIGH);
+}
+
+void goBack()   //run both motors in the same direction
+{
+  analogWrite(EnA, 200);
+  analogWrite(EnB, 200);
+  // turn on motor A
+  digitalWrite(In1, LOW);
+  digitalWrite(In2, HIGH);
+  // turn on motor B
+  digitalWrite(In3, HIGH);
+  digitalWrite(In4, LOW);
+}
+
+void turnLeft()
+{
+  analogWrite(EnA, 100);
+  analogWrite(EnB, 100);
+  // turn on motor A
+  digitalWrite(In1, HIGH);
+  digitalWrite(In2, LOW);
+  // turn on motor B
+  digitalWrite(In3, HIGH);
+  digitalWrite(In4, LOW);
+}
+
+void turnRight()
+{
+  analogWrite(EnA, 100);
+  analogWrite(EnB, 100);
+  // turn on motor A
+  digitalWrite(In1, LOW);
+  digitalWrite(In2, HIGH);
+  // turn on motor B
+  digitalWrite(In3, LOW);
+  digitalWrite(In4, HIGH);
+}
+
+void curveLeft()   //run both motors in the same direction
+{
+  analogWrite(EnA, 200);
+  analogWrite(EnB, 100);
+  // turn on motor A
+  digitalWrite(In1, HIGH);
+  digitalWrite(In2, LOW);
+  // turn on motor B
+  digitalWrite(In3, LOW);
+  digitalWrite(In4, HIGH);
+}
+
+void curveRight()   //run both motors in the same direction
+{
+  analogWrite(EnA, 100);
+  analogWrite(EnB, 200);
+  // turn on motor A
+  digitalWrite(In1, HIGH);
+  digitalWrite(In2, LOW);
+  // turn on motor B
+  digitalWrite(In3, LOW);
+  digitalWrite(In4, HIGH);
+}
+
+void backLeft()   //run both motors in the same direction
+{
+  analogWrite(EnA, 200);
+  analogWrite(EnB, 100);
+  // turn on motor A
+  digitalWrite(In1, LOW);
+  digitalWrite(In2, HIGH);
+  // turn on motor B
+  digitalWrite(In3, HIGH);
+  digitalWrite(In4, LOW);
+}
+
+void backRight()   //run both motors in the same direction
+{
+  analogWrite(EnA, 100);
+  analogWrite(EnB, 200);
+  // turn on motor A
+  digitalWrite(In1, LOW);
+  digitalWrite(In2, HIGH);
+  // turn on motor B
+  digitalWrite(In3, HIGH);
+  digitalWrite(In4, LOW);
+}
