@@ -57,6 +57,9 @@ def check_key(key):
     elif key.char == 'x':
         print(key)
         client_socket.sendto(b'x',(host_ip,port))
+    elif key.char == 'p':
+        print(key)
+        client_socket.sendto(b'p', (host_ip, port))
 
 # Collect events until released
 with Listener(
