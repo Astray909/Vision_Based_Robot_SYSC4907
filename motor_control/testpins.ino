@@ -10,10 +10,10 @@ void setup() {
 }
 
 void loop() {
-    Serial.println(digitalRead("mov0"));
-    Serial.print(digitalRead(mov0));
-    Serial.println(digitalRead("mov1"));
-    Serial.print(digitalRead(mov1));
-    Serial.println(digitalRead("mov2"));
-    Serial.print(digitalRead(mov2));
+    Serial.print(("mov0"));
+    Serial.println(digitalRead(mov0));
+    Serial.print(("mov1"));
+    Serial.println(digitalRead(mov1));
+    Serial.print(("mov2"));
+    Serial.println(digitalRead(mov2));
 }
