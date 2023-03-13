@@ -14,6 +14,8 @@ mov1 = 6
 mov2 = 13
 switch = 19
 
+switch_state = 0
+
 GPIO.setup(mov0, GPIO.OUT) # mov0 pin set as output
 GPIO.setup(mov1, GPIO.OUT) # mov1 pin set as output
 GPIO.setup(mov2, GPIO.OUT) # mov2 pin set as output
@@ -82,7 +84,9 @@ while True:
 	#SWITCH
     elif msg == b'p':
         print('switching modes')
-        if switch == 0:
+        if switch_state == 0:
             GPIO.output(switch, GPIO.HIGH)
+            switch_state = 1
         else:
             GPIO.output(switch, GPIO.LOW)
+            switch_state = 0
