@@ -51,7 +51,7 @@ void loop() {
   // put your main code here, to run repeatedly:
   int mSEL = digitalRead(mRED);// Determine if Arduino is in Manual Command Mode
   int cmdEn = 1;          // Arduino only takes user commands when cmdEn = 1;
-  
+  Serial.println(mSEL);
   if(mSEL==0)             // If NOT in Manual Control Mode
   {                       // sensor reading bitshift sesR = (sesL, sesM, sesR)
     int sesR = (((!digitalRead(ses_L))<<2) | (!(digitalRead(ses_M))<<1) | (!digitalRead(ses_R)));
@@ -120,6 +120,9 @@ void loop() {
                           //101 == CASE5 == RIGHT_Curve
                           //110 == CASE6 == LEFTB     <= NOT USED
                           //111 == CASE7 == RIGHTB    <= NOT USED
+    Serial.println(mov2);
+    Serial.println(mov1);
+    Serial.println(mov0);
     switch(cmdC)
     {
       case 0:
