@@ -111,7 +111,7 @@ void loop() {
   
   // motion control code from rpi to arduino below:               
   // Create command case variable cmdC using bit shifting:
-  int cmdC = ((digitalRead(mov2<<2)) | (digitalRead(mov1<<1)) | digitalRead(mov0));
+  int cmdC = ((digitalRead(mov2)<<2) | (digitalRead(mov1)<<1) | digitalRead(mov0));
                           //000 == CASE0 == STOP
                           //001 == CASE1 == STRAIGHT
                           //010 == CASE2 == LEFT_Spin
