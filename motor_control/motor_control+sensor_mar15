@@ -120,9 +120,10 @@ void loop() {
                           //101 == CASE5 == RIGHT_Curve
                           //110 == CASE6 == LEFTB     <= NOT USED
                           //111 == CASE7 == RIGHTB    <= NOT USED
-    Serial.println(mov2);
-    Serial.println(mov1);
-    Serial.println(mov0);
+    Serial.println(cmdC);
+    Serial.println(digitalRead(mov2));
+    Serial.println(digitalRead(mov1));
+    Serial.println(digitalRead(mov0));
     switch(cmdC)
     {
       case 0:
