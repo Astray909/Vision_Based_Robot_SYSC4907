@@ -53,76 +53,73 @@ new_timeframe = 0
 os.environ['DISPLAY'] = ':0'
 os.environ['PYVISTA_OFF_SCREEN'] = 'true'
 
-while(vid.isOpened()):
-
+while True:
     msg, client_addr = server_socket.recvfrom(BUFF_SIZE)
     print('connected from', client_addr)
-    
-    temp,frame = vid.read()
-    
-    fps2 = int(vid.get(cv2.CAP_PROP_FPS))
-    print("fps:", fps2)
 
-    # resize vid
-    frame = imutils.resize(frame, width = 500)
-    #frame = cv2.resize(frame, (720, 480))
+    # Control motor
+    if msg == b'w':
+        GPIO.output(mov0, GPIO.LOW)
+        GPIO.output(mov1, GPIO.LOW)
+        GPIO.output(mov2, GPIO.HIGH)
+    elif msg == b'a':
+        GPIO.output(mov0, GPIO.LOW)
+        GPIO.output(mov1, GPIO.HIGH)
+        GPIO.output(mov2, GPIO.LOW)
+    elif msg == b'd':
+        GPIO.output(mov0, GPIO.LOW)
+        GPIO.output(mov1, GPIO.HIGH)
+        GPIO.output(mov2, GPIO.HIGH)
+    elif msg == b'q':
+        GPIO.output(mov0, GPIO.HIGH)
+        GPIO.output(mov1, GPIO.LOW)
+        GPIO.output(mov2, GPIO.LOW)
+    elif msg == b'e':
+        GPIO.output(mov0, GPIO.HIGH)
+        GPIO.output(mov1, GPIO.LOW)
+        GPIO.output(mov2, GPIO.HIGH)
+    elif msg == b'x':
+        GPIO.output(mov0, GPIO.LOW)
+        GPIO.output(mov1, GPIO.LOW)
+        GPIO.output(mov2, GPIO.LOW)
+    elif msg == b'p':
+        if switch_state == 0:
+            GPIO.output(switch, GPIO.HIGH)
+            switch_state = 1
+        else:
+            GPIO.output(switch, GPIO.LOW)
+            switch_state = 0
 
-    #downscale quality
-    encoded,buffer = cv2.imencode('.jpg',frame,[cv2.IMWRITE_JPEG_QUALITY,80])
+    # open vid
+    while(vid.isOpened()):
+        temp,frame = vid.read()
+        
+        fps2 = int(vid.get(cv2.CAP_PROP_FPS))
+        print("fps:", fps2)
 
-    #encode to base64 (bytes)
-    message = base64.b64encode(buffer)
+        # resize vid
+        frame = imutils.resize(frame, width = 500)
+        #frame = cv2.resize(frame, (720, 480))
 
-    # get current time in seconds
-    dt = datetime.now()
-    ts = datetime.timestamp(dt)
+        #downscale quality
+        encoded,buffer = cv2.imencode('.jpg',frame,[cv2.IMWRITE_JPEG_QUALITY,80])
 
-    # pack time in header
-    udp_header = struct.pack('d', ts)
+        #encode to base64 (bytes)
+        message = base64.b64encode(buffer)
 
-    # add header and franes and send
-    message = udp_header + message
-    server_socket.sendto(message,client_addr)
-    
-    # math to get FPS
-    new_timeframe = time.time()
-    fps = 1/(new_timeframe-previous_timeframe)
-    previous_timeframe=new_timeframe
-    fps=int(fps)
+        # get current time in seconds
+        dt = datetime.now()
+        ts = datetime.timestamp(dt)
 
-    if msg == '':
-        pass
-    else:
-        # Control motor
-        if msg == b'w':
-            GPIO.output(mov0, GPIO.LOW)
-            GPIO.output(mov1, GPIO.LOW)
-            GPIO.output(mov2, GPIO.HIGH)
-            print("Motor should move forward")
-        elif msg == b'a':
-            GPIO.output(mov0, GPIO.LOW)
-            GPIO.output(mov1, GPIO.HIGH)
-            GPIO.output(mov2, GPIO.LOW)
-        elif msg == b'd':
-            GPIO.output(mov0, GPIO.LOW)
-            GPIO.output(mov1, GPIO.HIGH)
-            GPIO.output(mov2, GPIO.HIGH)
-        elif msg == b'q':
-            GPIO.output(mov0, GPIO.HIGH)
-            GPIO.output(mov1, GPIO.LOW)
-            GPIO.output(mov2, GPIO.LOW)
-        elif msg == b'e':
-            GPIO.output(mov0, GPIO.HIGH)
-            GPIO.output(mov1, GPIO.LOW)
-            GPIO.output(mov2, GPIO.HIGH)
-        elif msg == b'x':
-            GPIO.output(mov0, GPIO.LOW)
-            GPIO.output(mov1, GPIO.LOW)
-            GPIO.output(mov2, GPIO.LOW)
-        elif msg == b'p':
-            if switch_state == 0:
-                GPIO.output(switch, GPIO.HIGH)
-                switch_state = 1
-            else:
-                GPIO.output(switch, GPIO.LOW)
-                switch_state = 0
+        # pack time in header
+        udp_header = struct.pack('d', ts)
+
+        # add header and franes and send
+        message = udp_header + message
+        server_socket.sendto(message,client_addr)
+        
+        # math to get FPS
+        new_timeframe = time.time()
+        fps = 1/(new_timeframe-previous_timeframe)
+        previous_timeframe=new_timeframe
+        fps=int(fps)
