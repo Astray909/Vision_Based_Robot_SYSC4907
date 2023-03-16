@@ -54,58 +54,56 @@ os.environ['DISPLAY'] = ':0'
 os.environ['PYVISTA_OFF_SCREEN'] = 'true'
 
 while True:
+    msg, client_addr = server_socket.recvfrom(BUFF_SIZE)
+    print('connected from', client_addr)
 
-    # open vid
-    while(vid.isOpened()):
-        msg, client_addr = server_socket.recvfrom(BUFF_SIZE)
-        print('connected from', client_addr)
+    if msg == 'Hope you get this':
+        msg = b'x'
+        print("LOOP STARTED")
 
-        if msg == 'Hope you get this':
-            msg = b'x'
-
-        # Control motor
-        if msg == b'w':
-            GPIO.output(mov0, GPIO.LOW)
-            GPIO.output(mov1, GPIO.LOW)
-            GPIO.output(mov2, GPIO.HIGH)
-            print('w')
-        elif msg == b'a':
-            GPIO.output(mov0, GPIO.LOW)
-            GPIO.output(mov1, GPIO.HIGH)
-            GPIO.output(mov2, GPIO.LOW)
-            print('a')
-        elif msg == b'd':
-            GPIO.output(mov0, GPIO.LOW)
-            GPIO.output(mov1, GPIO.HIGH)
-            GPIO.output(mov2, GPIO.HIGH)
-            print('d')
-        elif msg == b'q':
-            GPIO.output(mov0, GPIO.HIGH)
-            GPIO.output(mov1, GPIO.LOW)
-            GPIO.output(mov2, GPIO.LOW)
-            print('q')
-        elif msg == b'e':
-            GPIO.output(mov0, GPIO.HIGH)
-            GPIO.output(mov1, GPIO.LOW)
-            GPIO.output(mov2, GPIO.HIGH)
-            print('e')
-        elif msg == b'x':
-            GPIO.output(mov0, GPIO.LOW)
-            GPIO.output(mov1, GPIO.LOW)
-            GPIO.output(mov2, GPIO.LOW)
-            print('x')
-        elif msg == b'p':
-            if switch_state == 0:
-                GPIO.output(switch, GPIO.HIGH)
-                switch_state = 1
-            else:
-                GPIO.output(switch, GPIO.LOW)
-                switch_state = 0
-            print('p')
+    # Control motor
+    if msg == b'w':
+        GPIO.output(mov0, GPIO.LOW)
+        GPIO.output(mov1, GPIO.LOW)
+        GPIO.output(mov2, GPIO.HIGH)
+        print('w')
+    elif msg == b'a':
+        GPIO.output(mov0, GPIO.LOW)
+        GPIO.output(mov1, GPIO.HIGH)
+        GPIO.output(mov2, GPIO.LOW)
+        print('a')
+    elif msg == b'd':
+        GPIO.output(mov0, GPIO.LOW)
+        GPIO.output(mov1, GPIO.HIGH)
+        GPIO.output(mov2, GPIO.HIGH)
+        print('d')
+    elif msg == b'q':
+        GPIO.output(mov0, GPIO.HIGH)
+        GPIO.output(mov1, GPIO.LOW)
+        GPIO.output(mov2, GPIO.LOW)
+        print('q')
+    elif msg == b'e':
+        GPIO.output(mov0, GPIO.HIGH)
+        GPIO.output(mov1, GPIO.LOW)
+        GPIO.output(mov2, GPIO.HIGH)
+        print('e')
+    elif msg == b'x':
+        GPIO.output(mov0, GPIO.LOW)
+        GPIO.output(mov1, GPIO.LOW)
+        GPIO.output(mov2, GPIO.LOW)
+        print('x')
+    elif msg == b'p':
+        if switch_state == 0:
+            GPIO.output(switch, GPIO.HIGH)
+            switch_state = 1
         else:
-            pass
+            GPIO.output(switch, GPIO.LOW)
+            switch_state = 0
+        print('p')
+    else:
+        pass
 
-        # while(vid.isOpened()):
+    while(vid.isOpened()):
 
         temp,frame = vid.read()
         
