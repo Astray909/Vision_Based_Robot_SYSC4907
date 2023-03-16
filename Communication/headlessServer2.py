@@ -95,6 +95,8 @@ while True:
             else:
                 GPIO.output(switch, GPIO.LOW)
                 switch_state = 0
+        else:
+            pass
 
         temp,frame = vid.read()
         
