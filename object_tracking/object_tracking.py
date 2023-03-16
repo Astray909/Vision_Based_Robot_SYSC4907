@@ -1,23 +1,34 @@
 import cv2
 import sys
 import os
- 
+import socket
+import numpy as np
+import time
+import base64
+import struct
+from datetime import datetime
+
 (major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
 
 TH = 1500
 
+def receive_frame(client_socket):
+    BUFF_SIZE = 524288
+    full_packet, _ = client_socket.recvfrom(BUFF_SIZE)
+    udp_header = full_packet[:8]
+    packet = full_packet[8:]
+    data = base64.b64decode(packet, ' /')
+    stringData = np.frombuffer(data, dtype=np.uint8)
+    frame = cv2.imdecode(stringData, 1)
+    return frame
+
 def save_frame_camera_key(device_num, dir_path, basename, ext='jpg', delay=1, window_name='frame'):
-    cap = cv2.VideoCapture(device_num)
-
-    if not cap.isOpened():
-        return
-
     os.makedirs(dir_path, exist_ok=True)
     base_path = os.path.join(dir_path, basename)
 
     n = 0
     while True:
-        ret, frame = cap.read()
+        frame = receive_frame(client_socket)
         cv2.imshow(window_name, frame)
         key = cv2.waitKey(delay) & 0xFF
         if key == ord('c'):
@@ -30,7 +41,7 @@ def save_frame_camera_key(device_num, dir_path, basename, ext='jpg', delay=1, wi
 
     cv2.destroyWindow(window_name)
 
-def tracking():
+def tracking(client_socket):
     # Set up tracker.
     # Instead of CSRT, you can also use
  
@@ -56,21 +67,6 @@ def tracking():
             tracker = cv2.legacy.TrackerMOSSE_create()
         elif tracker_type == "CSRT":
             tracker = cv2.TrackerCSRT_create()
- 
-    # Read video
-    # cap = cv2.VideoCapture("input.mp4")
-    cap = cv2.VideoCapture(0) # for using CAM
-
-    # Exit if video not opened.
-    if not cap.isOpened():
-        print("Could not open video")
-        sys.exit()
- 
-    # Read first frame.
-    ok, frame = cap.read()
-    if not ok:
-        print ('Cannot read video file')
-        sys.exit()
 
     # Create CSRT tracker object
     tracker = cv2.TrackerCSRT_create()
@@ -80,11 +76,7 @@ def tracking():
 
     while True:
         # Capture frame from webcam
-        ret, frame = cap.read()
-
-        # Check if frame was successfully captured
-        if not ret:
-            break
+        frame = receive_frame(client_socket)
 
         # If bounding box is not set, prompt user to select object to track
         if bbox is None:
@@ -157,9 +149,18 @@ def tracking():
             break
 
     # Release resources
-    cap.release()
     cv2.destroyAllWindows()
 
-if __name__ == '__main__' :
+if __name__ == '__main__':
+    # Add this code to create and set up a UDP socket
+    BUFF_SIZE = 524288
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, BUFF_SIZE)
+    host_ip = 'raspberrypi.local'
+    print(host_ip)
+    port = 9999
+    message = b'Hope you get this'
+    client_socket.sendto(message, (host_ip, port))
+
     save_frame_camera_key(0, 'data/roi_sel', 'roi_sel_img')
-    tracking()
+    tracking(client_socket)
