@@ -10,14 +10,32 @@ import struct
 # Initialize mediapipe hand model
 mp_hands = mp.solutions.hands
 
+hand_connections = [
+    (0, 1), (1, 2), (2, 3), (3, 4),
+    (0, 5), (5, 6), (6, 7), (7, 8),
+    (0, 9), (9, 10), (10, 11), (11, 12),
+    (0, 13), (13, 14), (14, 15), (15, 16),
+    (0, 17), (17, 18), (18, 19), (19, 20)
+]
+
 # Initialize webcam
 cap = cv2.VideoCapture(0)
 
 # Define drawing utility function
-def draw_landmarks(image, hand_landmarks):
+def draw_landmarks(image, hand_landmarks, connections):
+    # Draw landmarks as circles
     for landmark in hand_landmarks.landmark:
         x, y = int(landmark.x * image.shape[1]), int(landmark.y * image.shape[0])
-        cv2.circle(image, (x, y), 5, (0, 255, 0), -1)
+        cv2.circle(image, (x, y), 5, (0, 165, 255), -1)
+
+    # Draw connections as lines
+    for connection in connections:
+        start_idx, end_idx = connection
+        start_landmark = hand_landmarks.landmark[start_idx]
+        end_landmark = hand_landmarks.landmark[end_idx]
+        start_x, start_y = int(start_landmark.x * image.shape[1]), int(start_landmark.y * image.shape[0])
+        end_x, end_y = int(end_landmark.x * image.shape[1]), int(end_landmark.y * image.shape[0])
+        cv2.line(image, (start_x, start_y), (end_x, end_y), (100, 100, 100), 2)
 
 # Define function to check if hand is open or closed and pointing direction
 def get_hand_status(hand_landmarks):
@@ -73,10 +91,10 @@ def track_gestures():
             # Draw landmarks and predict hand status and direction on the image
             if results.multi_hand_landmarks:
                 for hand_landmarks in results.multi_hand_landmarks:
-                    draw_landmarks(frame, hand_landmarks)
+                    draw_landmarks(frame, hand_landmarks, hand_connections)
                     hand_status = get_hand_status(hand_landmarks)
                     if hand_landmarks == results.multi_hand_landmarks[0]:
-                        cv2.putText(frame, "left " + hand_status, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                        cv2.putText(frame, "left " + hand_status, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 100, 0), 2)
                         if hand_status == "open":
                             lo = True
                             lc = False
@@ -84,7 +102,7 @@ def track_gestures():
                             lo = False
                             lc = True
                     elif hand_landmarks == results.multi_hand_landmarks[1]:
-                        cv2.putText(frame, "right " + hand_status, (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                        cv2.putText(frame, "right " + hand_status, (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 100, 255), 2)
                         if hand_status == "open":
                             ro = True
                             rc = False
