@@ -59,38 +59,38 @@ while True:
     msg, client_addr = server_socket.recvfrom(BUFF_SIZE)
     print('connected from', client_addr)
 
-    # Control motor
-    if msg == b'w':
-        GPIO.output(mov0, GPIO.LOW)
-        GPIO.output(mov1, GPIO.LOW)
-        GPIO.output(mov2, GPIO.HIGH)
-    elif msg == b'a':
-        GPIO.output(mov0, GPIO.LOW)
-        GPIO.output(mov1, GPIO.HIGH)
-        GPIO.output(mov2, GPIO.LOW)
-    elif msg == b'd':
-        GPIO.output(mov0, GPIO.LOW)
-        GPIO.output(mov1, GPIO.HIGH)
-        GPIO.output(mov2, GPIO.HIGH)
-    elif msg == b'q':
-        GPIO.output(mov0, GPIO.HIGH)
-        GPIO.output(mov1, GPIO.LOW)
-        GPIO.output(mov2, GPIO.LOW)
-    elif msg == b'e':
-        GPIO.output(mov0, GPIO.HIGH)
-        GPIO.output(mov1, GPIO.LOW)
-        GPIO.output(mov2, GPIO.HIGH)
-    elif msg == b'x':
-        GPIO.output(mov0, GPIO.LOW)
-        GPIO.output(mov1, GPIO.LOW)
-        GPIO.output(mov2, GPIO.LOW)
-    elif msg == b'p':
-        if switch_state == 0:
-            GPIO.output(switch, GPIO.HIGH)
-            switch_state = 1
-        else:
-            GPIO.output(switch, GPIO.LOW)
-            switch_state = 0
+    # # Control motor
+    # if msg == b'w':
+    #     GPIO.output(mov0, GPIO.LOW)
+    #     GPIO.output(mov1, GPIO.LOW)
+    #     GPIO.output(mov2, GPIO.HIGH)
+    # elif msg == b'a':
+    #     GPIO.output(mov0, GPIO.LOW)
+    #     GPIO.output(mov1, GPIO.HIGH)
+    #     GPIO.output(mov2, GPIO.LOW)
+    # elif msg == b'd':
+    #     GPIO.output(mov0, GPIO.LOW)
+    #     GPIO.output(mov1, GPIO.HIGH)
+    #     GPIO.output(mov2, GPIO.HIGH)
+    # elif msg == b'q':
+    #     GPIO.output(mov0, GPIO.HIGH)
+    #     GPIO.output(mov1, GPIO.LOW)
+    #     GPIO.output(mov2, GPIO.LOW)
+    # elif msg == b'e':
+    #     GPIO.output(mov0, GPIO.HIGH)
+    #     GPIO.output(mov1, GPIO.LOW)
+    #     GPIO.output(mov2, GPIO.HIGH)
+    # elif msg == b'x':
+    #     GPIO.output(mov0, GPIO.LOW)
+    #     GPIO.output(mov1, GPIO.LOW)
+    #     GPIO.output(mov2, GPIO.LOW)
+    # elif msg == b'p':
+    #     if switch_state == 0:
+    #         GPIO.output(switch, GPIO.HIGH)
+    #         switch_state = 1
+    #     else:
+    #         GPIO.output(switch, GPIO.LOW)
+    #         switch_state = 0
 
     temp,frame = vid.read()
     
