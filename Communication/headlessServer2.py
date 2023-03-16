@@ -53,7 +53,7 @@ new_timeframe = 0
 os.environ['DISPLAY'] = ':0'
 os.environ['PYVISTA_OFF_SCREEN'] = 'true'
 
-while True:
+while (vid.isOpened()):
     msg, client_addr = server_socket.recvfrom(BUFF_SIZE)
     print('connected from', client_addr)
 
