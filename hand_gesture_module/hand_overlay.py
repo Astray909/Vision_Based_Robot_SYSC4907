@@ -15,7 +15,7 @@ def draw_landmarks(image, hand_landmarks):
         cv2.circle(image, (x, y), 5, (0, 255, 0), -1)
 
 # Define function to check if hand is open or closed and pointing direction
-def is_hand_open(hand_landmarks):
+def get_hand_status(hand_landmarks):
     # Check distance between thumb and index finger
     thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
     index_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
@@ -23,9 +23,9 @@ def is_hand_open(hand_landmarks):
     # Check if index and thumb are both extended
     if (hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_IP].y < hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_MCP].y and
         hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y < hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_MCP].y):
-        return "Open"
+        return "open"
     else:
-        return "Closed"
+        return "closed"
 
 # Start capturing frames from webcam
 with mp_hands.Hands(
@@ -48,12 +48,40 @@ with mp_hands.Hands(
         # Run the hand detection model on the image
         results = hands.process(image)
 
+        lo = False
+        ro = False
+        lc = False
+        rc = False
         # Draw landmarks and predict hand status and direction on the image
         if results.multi_hand_landmarks:
             for hand_landmarks in results.multi_hand_landmarks:
                 draw_landmarks(frame, hand_landmarks)
-                hand_status = is_hand_open(hand_landmarks)
-                cv2.putText(frame, hand_status, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                hand_status = get_hand_status(hand_landmarks)
+                if hand_landmarks == results.multi_hand_landmarks[0]:
+                    cv2.putText(frame, "left " + hand_status, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                    if hand_status == "open":
+                        lo = True
+                        lc = False
+                    else:
+                        lo = False
+                        lc = True
+                elif hand_landmarks == results.multi_hand_landmarks[1]:
+                    cv2.putText(frame, "right " + hand_status, (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                    if hand_status == "open":
+                        ro = True
+                        rc = False
+                    else:
+                        ro = False
+                        rc = True
+
+        if (lo and ro):
+            print("forward")
+        elif (lc and rc):
+            print("stop")
+        elif (lo and rc):
+            print("right")
+        elif (lc and ro):
+            print("left")
 
         # Show the image with landmarks and hand status overlaid
         cv2.imshow("Hand Landmarks", frame)
