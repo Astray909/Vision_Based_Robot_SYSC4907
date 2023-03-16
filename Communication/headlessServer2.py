@@ -60,6 +60,9 @@ while True:
         msg, client_addr = server_socket.recvfrom(BUFF_SIZE)
         print('connected from', client_addr)
 
+        if msg == '':
+            msg = b'x'
+
         # Control motor
         if msg == b'w':
             GPIO.output(mov0, GPIO.LOW)
