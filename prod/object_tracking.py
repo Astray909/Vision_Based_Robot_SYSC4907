@@ -39,30 +39,6 @@ def save_frame_camera_key(device_num, dir_path, basename, ext='jpg', delay=1, wi
 
 def tracking(client_socket):
     # Set up tracker.
-    # Instead of CSRT, you can also use
- 
-    tracker_types = ['BOOSTING', 'MIL','KCF', 'TLD', 'MEDIANFLOW', 'GOTURN', 'MOSSE', 'CSRT']
-    tracker_type = tracker_types[7]
- 
-    if int(minor_ver) < 3:
-        tracker = cv2.Tracker_create(tracker_type)
-    else:
-        if tracker_type == 'BOOSTING':
-            tracker = cv2.TrackerBoosting_create()
-        elif tracker_type == 'MIL':
-            tracker = cv2.TrackerMIL_create()
-        elif tracker_type == 'KCF':
-            tracker = cv2.TrackerKCF_create()
-        elif tracker_type == 'TLD':
-            tracker = cv2.TrackerTLD_create()
-        elif tracker_type == 'MEDIANFLOW':
-            tracker = cv2.TrackerMedianFlow_create()
-        elif tracker_type == 'GOTURN':
-             tracker = cv2.TrackerGOTURN_create()
-        elif tracker_type == 'MOSSE':
-            tracker = cv2.legacy.TrackerMOSSE_create()
-        elif tracker_type == "CSRT":
-            tracker = cv2.TrackerCSRT_create()
 
     # Create CSRT tracker object
     tracker = cv2.TrackerCSRT_create()
