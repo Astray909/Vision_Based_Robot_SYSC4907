@@ -49,10 +49,8 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  int mSEL = digitalRead(mRED);// Determine if Arduino is in Manual Command Mode
-  int cmdEn = 1;          // Arduino only takes user commands when cmdEn = 1;
-  Serial.println(mSEL);
-  if(mSEL==0)             // If NOT in Manual Control Mode
+  Serial.println(digitalRead(mRED));
+  if(!digitalRead(mRED))             // If NOT in Manual Control Mode
   {                       // sensor reading bitshift sesR = (sesL, sesM, sesR)
     int sesR = (((!digitalRead(ses_L))<<2) | (!(digitalRead(ses_M))<<1) | (!digitalRead(ses_R)));
                           // 000 == CASE0 == collision detected in : NONE
@@ -63,10 +61,6 @@ void loop() {
                           // 101 == CASE5 == collision detected in : left ,     , right
                           // 110 == CASE6 == collision detected in : left , mid ,
                           // 111 == CASE7 == collision detected in : left , mid , right
-    if (sesR != 0)        // If any sensor detects collision
-    {
-      cmdEn=0;            // Stop taking command and enter collision avoidance
-    }
     switch (sesR)         // Switch case based on sesR(sensor reading)
     {
       case 0:             // All sensor cleared, dont do anything
@@ -80,7 +74,8 @@ void loop() {
       {
         Serial.println("sesR: 001/100/101 -> Go Straight");
         goStraight();     // Go straight
-        break;
+        delay(20);
+        return;
       }
       case 2:
       case 3:             // Left sensor is cleared
@@ -88,30 +83,31 @@ void loop() {
       {
         Serial.println("sesR: 010/011/111 -> Turn Left");
         turnLeft();       // Turn left
-        break;
+        delay(20);
+        return;
       }
       case 6:             // Only Right sensor is cleared
       {
         Serial.println("sesR: 110 -> Turn Right");
         turnRight();      // Turn right
-        break;
+        delay(20);
+        return;
       }
       default:
       {
-        Serial.println("sesR: ERROR VALUE");
-        break;
+        Serial.println("sesR: ERROR SENSOR VALUE");
+        delay(20);
+        return;
       }
     }
+    delay(20);
   }
   
-  if (cmdEn=0) {          // if cmdEn=0, function in target avoidance
-    delay(10);            // Delay 10ms, avoid system overload
-    return;               // End this loop, no user command intake
-  }
+
   
   // motion control code from rpi to arduino below:               
   // Create command case variable cmdC using bit shifting:
-  int cmdC = ((digitalRead(mov2)<<2) | (digitalRead(mov1)<<1) | digitalRead(mov0));
+  int cmdC = ((digitalRead(mov0)<<2) | (digitalRead(mov1)<<1) | digitalRead(mov2));
                           //000 == CASE0 == STOP
                           //001 == CASE1 == STRAIGHT
                           //010 == CASE2 == LEFT_Spin
@@ -121,9 +117,9 @@ void loop() {
                           //110 == CASE6 == LEFTB     <= NOT USED
                           //111 == CASE7 == RIGHTB    <= NOT USED
     Serial.println(cmdC);
-    Serial.println(digitalRead(mov2));
-    Serial.println(digitalRead(mov1));
     Serial.println(digitalRead(mov0));
+    Serial.println(digitalRead(mov1));
+    Serial.println(digitalRead(mov2));
     switch(cmdC)
     {
       case 0:
@@ -168,7 +164,7 @@ void loop() {
         break;
       }
     }
-    delay(10);    //delay 10ms between each read for stability
+    delay(20);    //delay 10ms between each read for stability
     //END OF LOOP MAIN
 }
 
@@ -182,22 +178,10 @@ void goStraight()   //run both motors in the same direction
 {
   analogWrite(EnA, 200);
   analogWrite(EnB, 200);
-  // turn on motor A
-  digitalWrite(In1, HIGH);
-  digitalWrite(In2, LOW);
-  // turn on motor B
-  digitalWrite(In3, LOW);
-  digitalWrite(In4, HIGH);
-}
-
-void goBack()   //run both motors in the same direction
-{
-  analogWrite(EnA, 200);
-  analogWrite(EnB, 200);
-  // turn on motor A
+  // turn on motor A (left side 2 motors, going forward)
   digitalWrite(In1, LOW);
   digitalWrite(In2, HIGH);
-  // turn on motor B
+  // turn on motor B (right side 2 motors, going forward)
   digitalWrite(In3, HIGH);
   digitalWrite(In4, LOW);
 }
@@ -206,10 +190,10 @@ void turnLeft()
 {
   analogWrite(EnA, 100);
   analogWrite(EnB, 100);
-  // turn on motor A
+  // turn on motor A (left side 2 motors, going backward)
   digitalWrite(In1, HIGH);
   digitalWrite(In2, LOW);
-  // turn on motor B
+  // turn on motor B (right side 2 motors, going forward)
   digitalWrite(In3, HIGH);
   digitalWrite(In4, LOW);
 }
@@ -218,58 +202,34 @@ void turnRight()
 {
   analogWrite(EnA, 100);
   analogWrite(EnB, 100);
-  // turn on motor A
+  // turn on motor A (left side 2 motors, going forward)
   digitalWrite(In1, LOW);
   digitalWrite(In2, HIGH);
-  // turn on motor B
+  // turn on motor B (right side 2 motors, going backward)
   digitalWrite(In3, LOW);
   digitalWrite(In4, HIGH);
 }
 
 void curveLeft()   //run both motors in the same direction
 {
-  analogWrite(EnA, 200);
-  analogWrite(EnB, 100);
-  // turn on motor A
-  digitalWrite(In1, HIGH);
-  digitalWrite(In2, LOW);
-  // turn on motor B
-  digitalWrite(In3, LOW);
-  digitalWrite(In4, HIGH);
-}
-
-void curveRight()   //run both motors in the same direction
-{
   analogWrite(EnA, 100);
   analogWrite(EnB, 200);
-  // turn on motor A
-  digitalWrite(In1, HIGH);
-  digitalWrite(In2, LOW);
-  // turn on motor B
-  digitalWrite(In3, LOW);
-  digitalWrite(In4, HIGH);
-}
-
-void backLeft()   //run both motors in the same direction
-{
-  analogWrite(EnA, 200);
-  analogWrite(EnB, 100);
-  // turn on motor A
+  // turn on motor A (left side 2 motors, going forward)
   digitalWrite(In1, LOW);
   digitalWrite(In2, HIGH);
-  // turn on motor B
+  // turn on motor B (right side 2 motors, going forward)
   digitalWrite(In3, HIGH);
   digitalWrite(In4, LOW);
 }
 
-void backRight()   //run both motors in the same direction
+void curveRight()   //run both motors in the same direction
 {
-  analogWrite(EnA, 100);
-  analogWrite(EnB, 200);
-  // turn on motor A
+  analogWrite(EnA, 200);
+  analogWrite(EnB, 100);
+  // turn on motor A (left side 2 motors, going forward)
   digitalWrite(In1, LOW);
   digitalWrite(In2, HIGH);
-  // turn on motor B
+  // turn on motor B (right side 2 motors, going forward)
   digitalWrite(In3, HIGH);
   digitalWrite(In4, LOW);
 }
