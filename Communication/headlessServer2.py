@@ -68,26 +68,32 @@ while True:
             GPIO.output(mov0, GPIO.LOW)
             GPIO.output(mov1, GPIO.LOW)
             GPIO.output(mov2, GPIO.HIGH)
+            print('w')
         elif msg == b'a':
             GPIO.output(mov0, GPIO.LOW)
             GPIO.output(mov1, GPIO.HIGH)
             GPIO.output(mov2, GPIO.LOW)
+            print('a')
         elif msg == b'd':
             GPIO.output(mov0, GPIO.LOW)
             GPIO.output(mov1, GPIO.HIGH)
             GPIO.output(mov2, GPIO.HIGH)
+            print('d')
         elif msg == b'q':
             GPIO.output(mov0, GPIO.HIGH)
             GPIO.output(mov1, GPIO.LOW)
             GPIO.output(mov2, GPIO.LOW)
+            print('q')
         elif msg == b'e':
             GPIO.output(mov0, GPIO.HIGH)
             GPIO.output(mov1, GPIO.LOW)
             GPIO.output(mov2, GPIO.HIGH)
+            print('e')
         elif msg == b'x':
             GPIO.output(mov0, GPIO.LOW)
             GPIO.output(mov1, GPIO.LOW)
             GPIO.output(mov2, GPIO.LOW)
+            print('x')
         elif msg == b'p':
             if switch_state == 0:
                 GPIO.output(switch, GPIO.HIGH)
@@ -95,6 +101,7 @@ while True:
             else:
                 GPIO.output(switch, GPIO.LOW)
                 switch_state = 0
+            print('p')
         else:
             pass
 
