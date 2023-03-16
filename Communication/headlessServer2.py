@@ -54,6 +54,10 @@ os.environ['DISPLAY'] = ':0'
 os.environ['PYVISTA_OFF_SCREEN'] = 'true'
 
 while(vid.isOpened()):
+
+    msg, client_addr = server_socket.recvfrom(BUFF_SIZE)
+    print('connected from', client_addr)
+    
     temp,frame = vid.read()
     
     fps2 = int(vid.get(cv2.CAP_PROP_FPS))
@@ -85,9 +89,6 @@ while(vid.isOpened()):
     fps = 1/(new_timeframe-previous_timeframe)
     previous_timeframe=new_timeframe
     fps=int(fps)
-
-    msg, client_addr = server_socket.recvfrom(BUFF_SIZE)
-    print('connected from', client_addr)
 
     if msg == '':
         pass
