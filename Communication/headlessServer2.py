@@ -57,9 +57,7 @@ while True:
     msg, client_addr = server_socket.recvfrom(BUFF_SIZE)
     print('connected from', client_addr)
 
-    if msg == 'Hope you get this':
-        msg = b'x'
-        print("LOOP STARTED")
+    print(msg)
 
     # Control motor
     if msg == b'w':
