@@ -71,16 +71,3 @@ while True:
         fps = 1/(new_timeframe-previous_timeframe)
         previous_timeframe=new_timeframe
         fps=int(fps)
-        
-        # put fps on screen
-        # cv2.putText(frame,str(fps),(10,30), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,1,(25,255,0),4)
-        
-        # Remove display of the video
-        # cv2.imshow('SERVER VIDEO',frame)
-        
-        # Remove wait for user input
-        # key = cv2.waitKey(1) & 0xFF
-        # if key == ord('q'):
-        #     server_socket.close()
-        #     break
-        
