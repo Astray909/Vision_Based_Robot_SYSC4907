@@ -104,9 +104,6 @@ while True:
     while(vid.isOpened()):
 
         temp,frame = vid.read()
-        
-        fps2 = int(vid.get(cv2.CAP_PROP_FPS))
-        print("fps:", fps2)
 
         # resize vid
         frame = imutils.resize(frame, width = 500)
@@ -128,9 +125,3 @@ while True:
         # add header and franes and send
         message = udp_header + message
         server_socket.sendto(message,client_addr)
-        
-        # math to get FPS
-        new_timeframe = time.time()
-        fps = 1/(new_timeframe-previous_timeframe)
-        previous_timeframe=new_timeframe
-        fps=int(fps)
