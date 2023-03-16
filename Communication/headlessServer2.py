@@ -62,6 +62,7 @@ while True:
         GPIO.output(mov0, GPIO.LOW)
         GPIO.output(mov1, GPIO.LOW)
         GPIO.output(mov2, GPIO.HIGH)
+        print("Motor should move forward")
     elif msg == b'a':
         GPIO.output(mov0, GPIO.LOW)
         GPIO.output(mov1, GPIO.HIGH)
