@@ -101,27 +101,27 @@ while True:
     else:
         pass
 
-    while(vid.isOpened()):
+    # while(vid.isOpened()):
 
-        temp,frame = vid.read()
+    temp,frame = vid.read()
 
-        # resize vid
-        frame = imutils.resize(frame, width = 500)
-        #frame = cv2.resize(frame, (720, 480))
+    # resize vid
+    frame = imutils.resize(frame, width = 500)
+    #frame = cv2.resize(frame, (720, 480))
 
-        #downscale quality
-        encoded,buffer = cv2.imencode('.jpg',frame,[cv2.IMWRITE_JPEG_QUALITY,80])
+    #downscale quality
+    encoded,buffer = cv2.imencode('.jpg',frame,[cv2.IMWRITE_JPEG_QUALITY,80])
 
-        #encode to base64 (bytes)
-        message = base64.b64encode(buffer)
+    #encode to base64 (bytes)
+    message = base64.b64encode(buffer)
 
-        # get current time in seconds
-        dt = datetime.now()
-        ts = datetime.timestamp(dt)
+    # get current time in seconds
+    dt = datetime.now()
+    ts = datetime.timestamp(dt)
 
-        # pack time in header
-        udp_header = struct.pack('d', ts)
+    # pack time in header
+    udp_header = struct.pack('d', ts)
 
-        # add header and franes and send
-        message = udp_header + message
-        server_socket.sendto(message,client_addr)
+    # add header and franes and send
+    message = udp_header + message
+    server_socket.sendto(message,client_addr)
