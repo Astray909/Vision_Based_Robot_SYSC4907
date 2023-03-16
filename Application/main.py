@@ -7,6 +7,7 @@ from PyQt5.QtCore import *
 import PyQt5.QtGui as QtGui
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import *
+import socket
 import pynput
 
 
@@ -15,15 +16,14 @@ class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
 
     def run(self):
-        cap = cv2.VideoCapture(0)
         while True:
-            ret, cv_img = cap.read()
-            if ret:
-                self.change_pixmap_signal.emit(cv_img)
+            frame = self.receive_frame(client_socket)
+            if frame:
+                self.change_pixmap_signal.emit(frame)
 
-    def receive_frame(client_socket):
+    def receive_frame(self, socket):
         BUFF_SIZE = 524288
-        full_packet, _ = client_socket.recvfrom(BUFF_SIZE)
+        full_packet, _ = socket.recvfrom(BUFF_SIZE)
         udp_header = full_packet[:8]
         packet = full_packet[8:]
         data = base64.b64decode(packet, ' /')
@@ -234,6 +234,15 @@ class Window(QWidget):
 
 
 if __name__ == '__main__':
+    BUFF_SIZE = 524288
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, BUFF_SIZE)
+    host_ip = 'raspberrypi.local'
+    print(host_ip)
+    port = 9999
+    message = b'Hope you get this love App'
+    client_socket.sendto(message, (host_ip, port))
+
     App = QApplication(sys.argv)
     window = Window()
 
