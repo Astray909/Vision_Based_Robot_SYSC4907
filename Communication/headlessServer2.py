@@ -8,6 +8,8 @@ from datetime import datetime
 import struct
 import os
 
+import time
+
 GPIO.cleanup()
 
 # Pin Setup:
@@ -125,3 +127,5 @@ while (vid.isOpened()):
     # add header and franes and send
     message = udp_header + message
     server_socket.sendto(message,client_addr)
+
+    time.sleep(0.5) # delays for 0.5 seconds
