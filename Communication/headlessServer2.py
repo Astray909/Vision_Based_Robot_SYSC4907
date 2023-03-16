@@ -8,7 +8,9 @@ from datetime import datetime
 import struct
 import os
 
-import time
+import threading
+
+client_addr = [None]
 
 GPIO.cleanup()
 
@@ -55,77 +57,85 @@ new_timeframe = 0
 os.environ['DISPLAY'] = ':0'
 os.environ['PYVISTA_OFF_SCREEN'] = 'true'
 
-while (vid.isOpened()):
-    msg, client_addr = server_socket.recvfrom(BUFF_SIZE)
-    print('connected from', client_addr)
-
-    print(msg)
-
-    # Control motor
-    if msg == b'w':
-        GPIO.output(mov0, GPIO.LOW)
-        GPIO.output(mov1, GPIO.LOW)
-        GPIO.output(mov2, GPIO.HIGH)
-        print('w')
-    elif msg == b'a':
-        GPIO.output(mov0, GPIO.LOW)
-        GPIO.output(mov1, GPIO.HIGH)
-        GPIO.output(mov2, GPIO.LOW)
-        print('a')
-    elif msg == b'd':
-        GPIO.output(mov0, GPIO.LOW)
-        GPIO.output(mov1, GPIO.HIGH)
-        GPIO.output(mov2, GPIO.HIGH)
-        print('d')
-    elif msg == b'q':
-        GPIO.output(mov0, GPIO.HIGH)
-        GPIO.output(mov1, GPIO.LOW)
-        GPIO.output(mov2, GPIO.LOW)
-        print('q')
-    elif msg == b'e':
-        GPIO.output(mov0, GPIO.HIGH)
-        GPIO.output(mov1, GPIO.LOW)
-        GPIO.output(mov2, GPIO.HIGH)
-        print('e')
-    elif msg == b'x':
-        GPIO.output(mov0, GPIO.LOW)
-        GPIO.output(mov1, GPIO.LOW)
-        GPIO.output(mov2, GPIO.LOW)
-        print('x')
-    elif msg == b'p':
-        if switch_state == 0:
-            GPIO.output(switch, GPIO.HIGH)
-            switch_state = 1
+def motor_control(server_socket):
+    while True:
+        msg, addr = server_socket.recvfrom(BUFF_SIZE)
+        print('connected from', addr)
+        client_addr[0] = addr
+        # Control motor
+        if msg == b'w':
+            GPIO.output(mov0, GPIO.LOW)
+            GPIO.output(mov1, GPIO.LOW)
+            GPIO.output(mov2, GPIO.HIGH)
+            print('w')
+        elif msg == b'a':
+            GPIO.output(mov0, GPIO.LOW)
+            GPIO.output(mov1, GPIO.HIGH)
+            GPIO.output(mov2, GPIO.LOW)
+            print('a')
+        elif msg == b'd':
+            GPIO.output(mov0, GPIO.LOW)
+            GPIO.output(mov1, GPIO.HIGH)
+            GPIO.output(mov2, GPIO.HIGH)
+            print('d')
+        elif msg == b'q':
+            GPIO.output(mov0, GPIO.HIGH)
+            GPIO.output(mov1, GPIO.LOW)
+            GPIO.output(mov2, GPIO.LOW)
+            print('q')
+        elif msg == b'e':
+            GPIO.output(mov0, GPIO.HIGH)
+            GPIO.output(mov1, GPIO.LOW)
+            GPIO.output(mov2, GPIO.HIGH)
+            print('e')
+        elif msg == b'x':
+            GPIO.output(mov0, GPIO.LOW)
+            GPIO.output(mov1, GPIO.LOW)
+            GPIO.output(mov2, GPIO.LOW)
+            print('x')
+        elif msg == b'p':
+            if switch_state == 0:
+                GPIO.output(switch, GPIO.HIGH)
+                switch_state = 1
+            else:
+                GPIO.output(switch, GPIO.LOW)
+                switch_state = 0
+            print('p')
         else:
-            GPIO.output(switch, GPIO.LOW)
-            switch_state = 0
-        print('p')
-    else:
-        pass
+            pass
 
-    # while(vid.isOpened()):
+def video_stream(server_socket, vid):
+    while vid.isOpened():
+        if client_addr[0] is not None:
+            temp, frame = vid.read()
 
-    temp,frame = vid.read()
+            # resize vid
+            frame = imutils.resize(frame, width = 500)
+            #frame = cv2.resize(frame, (720, 480))
 
-    # resize vid
-    frame = imutils.resize(frame, width = 500)
-    #frame = cv2.resize(frame, (720, 480))
+            #downscale quality
+            encoded,buffer = cv2.imencode('.jpg',frame,[cv2.IMWRITE_JPEG_QUALITY,80])
 
-    #downscale quality
-    encoded,buffer = cv2.imencode('.jpg',frame,[cv2.IMWRITE_JPEG_QUALITY,80])
+            #encode to base64 (bytes)
+            message = base64.b64encode(buffer)
 
-    #encode to base64 (bytes)
-    message = base64.b64encode(buffer)
+            # get current time in seconds
+            dt = datetime.now()
+            ts = datetime.timestamp(dt)
 
-    # get current time in seconds
-    dt = datetime.now()
-    ts = datetime.timestamp(dt)
+            # pack time in header
+            udp_header = struct.pack('d', ts)
 
-    # pack time in header
-    udp_header = struct.pack('d', ts)
+            # add header and franes and send
+            message = udp_header + message
+            server_socket.sendto(message, client_addr[0])
 
-    # add header and franes and send
-    message = udp_header + message
-    server_socket.sendto(message,client_addr)
+# Create and start motor control thread
+motor_control_thread = threading.Thread(target=motor_control, args=(server_socket,))
+motor_control_thread.start()
 
-    time.sleep(0.5) # delays for 0.5 seconds
+# Run video streaming in the main thread
+video_stream(server_socket, vid)
+
+# Wait for the motor control thread to finish (optional)
+motor_control_thread.join()
