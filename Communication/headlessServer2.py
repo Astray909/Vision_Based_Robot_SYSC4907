@@ -54,6 +54,38 @@ os.environ['DISPLAY'] = ':0'
 os.environ['PYVISTA_OFF_SCREEN'] = 'true'
 
 while(vid.isOpened()):
+    temp,frame = vid.read()
+    
+    fps2 = int(vid.get(cv2.CAP_PROP_FPS))
+    print("fps:", fps2)
+
+    # resize vid
+    frame = imutils.resize(frame, width = 500)
+    #frame = cv2.resize(frame, (720, 480))
+
+    #downscale quality
+    encoded,buffer = cv2.imencode('.jpg',frame,[cv2.IMWRITE_JPEG_QUALITY,80])
+
+    #encode to base64 (bytes)
+    message = base64.b64encode(buffer)
+
+    # get current time in seconds
+    dt = datetime.now()
+    ts = datetime.timestamp(dt)
+
+    # pack time in header
+    udp_header = struct.pack('d', ts)
+
+    # add header and franes and send
+    message = udp_header + message
+    server_socket.sendto(message,client_addr)
+    
+    # math to get FPS
+    new_timeframe = time.time()
+    fps = 1/(new_timeframe-previous_timeframe)
+    previous_timeframe=new_timeframe
+    fps=int(fps)
+
     msg, client_addr = server_socket.recvfrom(BUFF_SIZE)
     print('connected from', client_addr)
 
@@ -90,35 +122,3 @@ while(vid.isOpened()):
         else:
             GPIO.output(switch, GPIO.LOW)
             switch_state = 0
-            
-    temp,frame = vid.read()
-    
-    fps2 = int(vid.get(cv2.CAP_PROP_FPS))
-    print("fps:", fps2)
-
-    # resize vid
-    frame = imutils.resize(frame, width = 500)
-    #frame = cv2.resize(frame, (720, 480))
-
-    #downscale quality
-    encoded,buffer = cv2.imencode('.jpg',frame,[cv2.IMWRITE_JPEG_QUALITY,80])
-
-    #encode to base64 (bytes)
-    message = base64.b64encode(buffer)
-
-    # get current time in seconds
-    dt = datetime.now()
-    ts = datetime.timestamp(dt)
-
-    # pack time in header
-    udp_header = struct.pack('d', ts)
-
-    # add header and franes and send
-    message = udp_header + message
-    server_socket.sendto(message,client_addr)
-    
-    # math to get FPS
-    new_timeframe = time.time()
-    fps = 1/(new_timeframe-previous_timeframe)
-    previous_timeframe=new_timeframe
-    fps=int(fps)
