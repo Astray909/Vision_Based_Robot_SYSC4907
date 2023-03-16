@@ -1,12 +1,8 @@
 import cv2
-import sys
 import os
 import socket
 import numpy as np
-import time
 import base64
-import struct
-from datetime import datetime
 
 (major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
 
@@ -120,25 +116,31 @@ def tracking(client_socket):
                 print("Bounding box is in left zone.")
                 if TH > actual_size:
                     print("Too far")
+                    client_socket.sendto(b'q',(host_ip,port))
                     cv2.putText(frame, f"Too far, left zone", (bbox[0], bbox[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
                 else:
                     print("Too close")
+                    client_socket.sendto(b'a',(host_ip,port))
                     cv2.putText(frame, f"Too close, left zone", (bbox[0], bbox[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
             elif center_zone_left <= center_x <= center_zone_right:
                 print("Bounding box is in center zone.")
                 if TH > actual_size:
                     print("Too far")
+                    client_socket.sendto(b'w',(host_ip,port))
                     cv2.putText(frame, f"Too far, center zone", (bbox[0], bbox[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
                 else:
                     print("Too close")
+                    client_socket.sendto(b'x',(host_ip,port))
                     cv2.putText(frame, f"Too close, center zone", (bbox[0], bbox[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
             else:
                 print("Bounding box is in right zone.")
                 if TH > actual_size:
                     print("Too far")
+                    client_socket.sendto(b'e',(host_ip,port))
                     cv2.putText(frame, f"Too far, right zone", (bbox[0], bbox[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
                 else:
                     print("Too close")
+                    client_socket.sendto(b'd',(host_ip,port))
                     cv2.putText(frame, f"Too close, right zone", (bbox[0], bbox[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
         # Display frame with bounding box
