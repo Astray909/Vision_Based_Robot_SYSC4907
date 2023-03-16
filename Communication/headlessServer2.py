@@ -60,9 +60,7 @@ while True:
         msg, client_addr = server_socket.recvfrom(BUFF_SIZE)
         print('connected from', client_addr)
 
-        print("messsssssssssssage" + str(msg) + " eeeeeeeeeeeeeeeeeeeeee")
-
-        if msg == '':
+        if msg == 'Hope you get this':
             msg = b'x'
 
         # Control motor
