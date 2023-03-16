@@ -4,6 +4,8 @@ import os
  
 (major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
 
+TH = 1500
+
 def save_frame_camera_key(device_num, dir_path, basename, ext='jpg', delay=1, window_name='frame'):
     cap = cv2.VideoCapture(device_num)
 
@@ -111,7 +113,6 @@ def tracking():
             # Draw bounding box with adjusted size
             bbox = tuple(map(int, bbox))
             cv2.rectangle(frame, bbox, (0, 255, 0), 2)
-            cv2.putText(frame, f"Size: {actual_size:.2f} cm", (bbox[0], bbox[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
             # Extract the x, y coordinates of the bounding box
             x, y, w, h = [int(i) for i in bbox]
@@ -125,10 +126,28 @@ def tracking():
             # Determine if bounding box is in left, right or center zone
             if center_x < center_zone_left:
                 print("Bounding box is in left zone.")
+                if TH > actual_size:
+                    print("Too far")
+                    cv2.putText(frame, f"Too far, left zone", (bbox[0], bbox[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                else:
+                    print("Too close")
+                    cv2.putText(frame, f"Too close, left zone", (bbox[0], bbox[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
             elif center_zone_left <= center_x <= center_zone_right:
                 print("Bounding box is in center zone.")
+                if TH > actual_size:
+                    print("Too far")
+                    cv2.putText(frame, f"Too far, center zone", (bbox[0], bbox[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                else:
+                    print("Too close")
+                    cv2.putText(frame, f"Too close, center zone", (bbox[0], bbox[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
             else:
                 print("Bounding box is in right zone.")
+                if TH > actual_size:
+                    print("Too far")
+                    cv2.putText(frame, f"Too far, right zone", (bbox[0], bbox[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                else:
+                    print("Too close")
+                    cv2.putText(frame, f"Too close, right zone", (bbox[0], bbox[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
         # Display frame with bounding box
         cv2.imshow("Frame", frame)
