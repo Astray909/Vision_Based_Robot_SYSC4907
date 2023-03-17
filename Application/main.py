@@ -18,8 +18,7 @@ class VideoThread(QThread):
     def run(self):
         while True:
             frame = self.receive_frame(client_socket)
-            if frame:
-                self.change_pixmap_signal.emit(frame)
+            self.change_pixmap_signal.emit(frame)
 
     def receive_frame(self, socket):
         BUFF_SIZE = 524288
