@@ -111,11 +111,11 @@ def track_gestures():
                             rc = True
 
             if (lo and ro):
-                print("forward")
-                client_socket.sendto(b'w',(host_ip,port))
-            elif (lc and rc):
                 print("stop")
                 client_socket.sendto(b'x',(host_ip,port))
+            elif (lc and rc):
+                print("forward")
+                client_socket.sendto(b'w',(host_ip,port))
             elif (lo and rc):
                 print("right")
                 client_socket.sendto(b'd',(host_ip,port))
