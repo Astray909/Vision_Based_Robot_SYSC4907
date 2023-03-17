@@ -117,11 +117,11 @@ def track_gestures():
                 print("forward")
                 client_socket.sendto(b'w',(host_ip,port))
             elif (lo and rc):
-                print("right")
-                client_socket.sendto(b'd',(host_ip,port))
-            elif (lc and ro):
                 print("left")
                 client_socket.sendto(b'a',(host_ip,port))
+            elif (lc and ro):
+                print("right")
+                client_socket.sendto(b'd',(host_ip,port))
 
             # Show the image with landmarks and hand status overlaid
             cv2.imshow("Hand Landmarks", frame)
